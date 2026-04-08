@@ -1,0 +1,25 @@
+{
+  "Major": 2,
+  "Minor": 2,
+  "Patch": 0,
+  "PreRelease": null,
+  "LastUpdated": "2025-07-16T16:13:10.0573298Z",
+  "LastCommitHash": "eab5da3",
+  "BuildNumber": 2,
+  "ReleaseDate": "2025-07-16",
+  "Tag": "v2.2.0",
+  "ProductName": "On-Prem Network InfraIQ",
+  "Description": "Enterprise-grade on-premises network infrastructure intelligence and security assessment platform",
+  "Copyright": "Copyright © 2025",
+  "Authors": "On-Prem Network InfraIQ Team",
+  "Features": [
+    "Web-based dashboard interface",
+    "Database result storage with Entity Framework",
+    "Enhanced IPv6 support with neighbor discovery",
+    "Cloud service integration (AWS, Azure, GCP)",
+    "Machine learning for anomaly detection",
+    "RESTful API with OpenAPI documentation",
+    "Real-time scanning capabilities",
+    "Professional enterprise-grade security assessment"
+  ]
+}

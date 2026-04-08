@@ -1,0 +1,198 @@
+name: 🚀 Build and Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: 🧪 Test Suite
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build solution
+      run: dotnet build --configuration Release --no-restore
+      
+    - name: Run unit tests
+      run: |
+        mkdir -p TestResults
+        dotnet test Discovery.Tests --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --logger trx --results-directory TestResults
+      
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: TestResults/
+        
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        directory: ./TestResults
+        fail_ci_if_error: false
+
+  build:
+    name: 🏗️ Build Matrix
+    needs: test
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+      
+    - name: Test CLI
+      run: dotnet run --project Discovery --configuration Release -- --help
+      
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+        
+    - name: Restore dependencies
+      run: dotnet restore
+        
+    # Framework-dependent deployments
+    - name: Publish Linux x64 (Framework-Dependent)
+      run: dotnet publish Discovery/Discovery.csproj -c Release -r linux-x64 --self-contained false -p:PublishSingleFile=true -o ./publish/framework-dependent/linux-x64
+      
+    - name: Publish Windows x64 (Framework-Dependent)
+      run: dotnet publish Discovery/Discovery.csproj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o ./publish/framework-dependent/win-x64
+      
+    - name: Publish macOS x64 (Framework-Dependent)
+      run: dotnet publish Discovery/Discovery.csproj -c Release -r osx-x64 --self-contained false -p:PublishSingleFile=true -o ./publish/framework-dependent/osx-x64
+      
+    - name: Publish macOS ARM64 (Framework-Dependent)
+      run: dotnet publish Discovery/Discovery.csproj -c Release -r osx-arm64 --self-contained false -p:PublishSingleFile=true -o ./publish/framework-dependent/osx-arm64
+      
+    # Self-contained deployments
+    - name: Publish Linux x64 (Self-Contained)
+      run: dotnet publish Discovery/Discovery.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=true -o ./publish/self-contained/linux-x64
+      
+    - name: Publish Windows x64 (Self-Contained)
+      run: dotnet publish Discovery/Discovery.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=true -o ./publish/self-contained/win-x64
+      
+    - name: Publish macOS x64 (Self-Contained)
+      run: dotnet publish Discovery/Discovery.csproj -c Release -r osx-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=true -o ./publish/self-contained/osx-x64
+      
+    - name: Publish macOS ARM64 (Self-Contained)
+      run: dotnet publish Discovery/Discovery.csproj -c Release -r osx-arm64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=true -o ./publish/self-contained/osx-arm64
+      
+    - name: Publish Portable (Any CPU)
+      run: dotnet publish Discovery/Discovery.csproj -c Release --self-contained false -o ./publish/portable
+      
+    # Create archives
+    - name: Archive Linux x64 (Framework-Dependent)
+      run: tar -czf AdvNetDiscovery-v1.0.0-linux-x64-framework-dependent.tar.gz -C ./publish/framework-dependent/linux-x64 .
+      
+    - name: Archive Windows x64 (Framework-Dependent)
+      run: zip -r AdvNetDiscovery-v1.0.0-win-x64-framework-dependent.zip ./publish/framework-dependent/win-x64/*
+      
+    - name: Archive macOS x64 (Framework-Dependent)
+      run: tar -czf AdvNetDiscovery-v1.0.0-osx-x64-framework-dependent.tar.gz -C ./publish/framework-dependent/osx-x64 .
+      
+    - name: Archive macOS ARM64 (Framework-Dependent)
+      run: tar -czf AdvNetDiscovery-v1.0.0-osx-arm64-framework-dependent.tar.gz -C ./publish/framework-dependent/osx-arm64 .
+      
+    - name: Archive Linux x64 (Self-Contained)
+      run: tar -czf AdvNetDiscovery-v1.0.0-linux-x64-self-contained.tar.gz -C ./publish/self-contained/linux-x64 .
+      
+    - name: Archive Windows x64 (Self-Contained)
+      run: zip -r AdvNetDiscovery-v1.0.0-win-x64-self-contained.zip ./publish/self-contained/win-x64/*
+      
+    - name: Archive macOS x64 (Self-Contained)
+      run: tar -czf AdvNetDiscovery-v1.0.0-osx-x64-self-contained.tar.gz -C ./publish/self-contained/osx-x64 .
+      
+    - name: Archive macOS ARM64 (Self-Contained)
+      run: tar -czf AdvNetDiscovery-v1.0.0-osx-arm64-self-contained.tar.gz -C ./publish/self-contained/osx-arm64 .
+      
+    - name: Archive Portable
+      run: zip -r AdvNetDiscovery-v1.0.0-portable.zip ./publish/portable/*
+      
+    # Upload artifacts
+    - name: Upload Linux x64 (Framework-Dependent)
+      uses: actions/upload-artifact@v4
+      with:
+        name: AdvNetDiscovery-linux-x64-framework-dependent
+        path: AdvNetDiscovery-v1.0.0-linux-x64-framework-dependent.tar.gz
+        
+    - name: Upload Windows x64 (Framework-Dependent)
+      uses: actions/upload-artifact@v4
+      with:
+        name: AdvNetDiscovery-win-x64-framework-dependent
+        path: AdvNetDiscovery-v1.0.0-win-x64-framework-dependent.zip
+        
+    - name: Upload macOS x64 (Framework-Dependent)
+      uses: actions/upload-artifact@v4
+      with:
+        name: AdvNetDiscovery-osx-x64-framework-dependent
+        path: AdvNetDiscovery-v1.0.0-osx-x64-framework-dependent.tar.gz
+        
+    - name: Upload macOS ARM64 (Framework-Dependent)
+      uses: actions/upload-artifact@v4
+      with:
+        name: AdvNetDiscovery-osx-arm64-framework-dependent
+        path: AdvNetDiscovery-v1.0.0-osx-arm64-framework-dependent.tar.gz
+        
+    - name: Upload Linux x64 (Self-Contained)
+      uses: actions/upload-artifact@v4
+      with:
+        name: AdvNetDiscovery-linux-x64-self-contained
+        path: AdvNetDiscovery-v1.0.0-linux-x64-self-contained.tar.gz
+        
+    - name: Upload Windows x64 (Self-Contained)
+      uses: actions/upload-artifact@v4
+      with:
+        name: AdvNetDiscovery-win-x64-self-contained
+        path: AdvNetDiscovery-v1.0.0-win-x64-self-contained.zip
+        
+    - name: Upload macOS x64 (Self-Contained)
+      uses: actions/upload-artifact@v4
+      with:
+        name: AdvNetDiscovery-osx-x64-self-contained
+        path: AdvNetDiscovery-v1.0.0-osx-x64-self-contained.tar.gz
+        
+    - name: Upload macOS ARM64 (Self-Contained)
+      uses: actions/upload-artifact@v4
+      with:
+        name: AdvNetDiscovery-osx-arm64-self-contained
+        path: AdvNetDiscovery-v1.0.0-osx-arm64-self-contained.tar.gz
+        
+    - name: Upload Portable
+      uses: actions/upload-artifact@v4
+      with:
+        name: AdvNetDiscovery-portable
+        path: AdvNetDiscovery-v1.0.0-portable.zip

@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="On-Prem Network InfraIQ - Enterprise-grade network scanning and security assessment platform" />
+    <meta name="keywords" content="network scanning, security assessment, vulnerability detection, network discovery" />
+    <meta name="author" content="On-Prem Network InfraIQ Team" />
+    
+    <title>@ViewData["Title"] - On-Prem Network InfraIQ</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/images/icon.png" />
+    <link rel="apple-touch-icon" href="/images/icon.png" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- CSS Dependencies -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="~/css/dashboard.css" rel="stylesheet" />
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="~/js/dashboard.js" as="script" />
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#667eea" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="NetDiscovery" />
+    <meta name="msapplication-TileColor" content="#667eea" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    
+    <!-- iOS Splash Screens -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="apple-touch-startup-image" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>" />
+    
+    <!-- Performance hints -->
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net" />
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com" />
+</head>
+<body class="bg-dark text-light">
+    <!-- Skip to main content for accessibility -->
+    <a class="visually-hidden-focusable btn btn-primary" href="#main-content">Skip to main content</a>
+    
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand d-flex align-items-center" href="/">
+                    <i class="fas fa-network-wired me-2"></i>
+                    <span class="d-none d-sm-inline">On-Prem Network InfraIQ</span>
+                    <span class="d-sm-none">AND</span>
+                </a>
+                
+                <!-- Connection Status Indicator -->
+                <div class="d-flex align-items-center me-3 d-none d-md-flex">
+                    <div class="api-status">
+                        <div class="skeleton skeleton-text" style="width: 100px; height: 20px;"></div>
+                    </div>
+                </div>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewData["Title"]?.ToString() == "Dashboard" ? "active" : "")" href="/">
+                                <i class="fas fa-tachometer-alt me-1"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewData["Title"]?.ToString() == "Network Scanner" ? "active" : "")" href="/Dashboard/Scanner">
+                                <i class="fas fa-search me-1"></i>
+                                <span>Network Scanner</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewData["Title"]?.ToString() == "Scan Results" ? "active" : "")" href="/Dashboard/Results">
+                                <i class="fas fa-list me-1"></i>
+                                <span>Scan Results</span>
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="apiDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-code me-1"></i>
+                                <span>API</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                <li>
+                                    <a class="dropdown-item" href="/swagger" target="_blank">
+                                        <i class="fas fa-book me-2"></i>API Documentation
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="/api/NetworkScan/status" target="_blank">
+                                        <i class="fas fa-heartbeat me-2"></i>API Status
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="#" onclick="showApiExamples()">
+                                        <i class="fas fa-code-branch me-2"></i>Code Examples
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    
+                    <!-- Right side navigation -->
+                    <ul class="navbar-nav">
+                        <!-- Search -->
+                        <li class="nav-item d-none d-lg-block">
+                            <form class="d-flex" role="search">
+                                <div class="input-group">
+                                    <input class="form-control form-control-sm" type="search" placeholder="Search..." aria-label="Search" id="globalSearch" style="width: 200px;">
+                                    <button class="btn btn-outline-light btn-sm" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </li>
+                        
+                        <!-- Theme Toggle -->
+                        <li class="nav-item">
+                            <button class="btn nav-link" id="theme-toggle" onclick="toggleTheme()" data-bs-toggle="tooltip" title="Toggle theme">
+                                <i class="fas fa-moon"></i>
+                            </button>
+                        </li>
+                        
+                        <!-- Settings -->
+                        <li class="nav-item">
+                            <button class="btn nav-link" data-bs-toggle="modal" data-bs-target="#settingsModal" data-bs-toggle="tooltip" title="Settings">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                        </li>
+                        
+                        <!-- Notifications -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-bell"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="notificationBadge">
+                                    0
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" style="width: 300px;">
+                                <li class="dropdown-header">
+                                    <i class="fas fa-bell me-2"></i>Notifications
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li id="notificationList">
+                                    <div class="dropdown-item-text text-muted text-center py-3">
+                                        <i class="fas fa-inbox me-2"></i>No new notifications
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        
+                        <!-- Help Menu -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="helpDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-question-circle"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
+                                <li>
+                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#helpModal">
+                                        <i class="fas fa-question me-2"></i>Help & Support
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#" onclick="showKeyboardShortcuts()">
+                                        <i class="fas fa-keyboard me-2"></i>Keyboard Shortcuts
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="https://github.com/jomardyan/On-Prem-Network-InfraIQ" target="_blank">
+                                        <i class="fab fa-github me-2"></i>GitHub Repository
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">
+                                        <i class="fas fa-info-circle me-2"></i>About
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        
+                        <!-- Version Badge -->
+                        <li class="nav-item d-none d-lg-flex align-items-center">
+                            <span class="navbar-text ms-2">
+                                <span class="badge bg-primary">v2.0.0</span>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container-fluid py-4" id="main-content" role="main">
+        @RenderBody()
+    </main>
+
+    <!-- Enhanced Footer -->
+    <footer class="mt-5">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card glass-card">
+                        <div class="card-body py-3">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-shield-alt me-2 text-success"></i>
+                                        <span class="text-muted">
+                                            &copy; 2025 On-Prem Network InfraIQ - Enterprise Security Platform
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-md-end">
+                                    <div class="d-flex justify-content-md-end align-items-center gap-3">
+                                        <span class="text-muted small">
+                                            <i class="fas fa-code me-1"></i>Built with .NET 8.0
+                                        </span>
+                                        <span class="text-muted small">
+                                            <i class="fas fa-database me-1"></i>372 Tests Passing
+                                        </span>
+                                        <div class="d-flex gap-2">
+                                            <a href="https://github.com/jomardyan/On-Prem-Network-InfraIQ" class="btn btn-outline-light btn-sm" target="_blank" data-bs-toggle="tooltip" title="View on GitHub">
+                                                <i class="fab fa-github"></i>
+                                            </a>
+                                            <a href="/swagger" class="btn btn-outline-light btn-sm" target="_blank" data-bs-toggle="tooltip" title="API Documentation">
+                                                <i class="fas fa-code"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Settings Modal -->
+    <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="settingsModalLabel">
+                        <i class="fas fa-cog me-2"></i>Application Settings
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-primary">
+                                <i class="fas fa-paint-brush me-2"></i>Appearance
+                            </h6>
+                            <div class="mb-3">
+                                <label for="themeSelect" class="form-label">Theme</label>
+                                <select class="form-select" id="themeSelect">
+                                    <option value="dark">Dark Theme</option>
+                                    <option value="light">Light Theme</option>
+                                    <option value="auto">Auto (System Preference)</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="enableAnimations" checked>
+                                    <label class="form-check-label" for="enableAnimations">
+                                        Enable Animations
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="enableSounds">
+                                    <label class="form-check-label" for="enableSounds">
+                                        Enable Sound Effects
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-primary">
+                                <i class="fas fa-network-wired me-2"></i>Scanning
+                            </h6>
+                            <div class="mb-3">
+                                <label for="maxConcurrentScans" class="form-label">Max Concurrent Scans</label>
+                                <input type="range" class="form-range" id="maxConcurrentScans" min="10" max="500" value="200">
+                                <div class="form-text">Current: <span id="maxConcurrentScansValue">200</span></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="defaultTimeout" class="form-label">Default Timeout (ms)</label>
+                                <input type="number" class="form-control" id="defaultTimeout" value="5000" min="1000" max="60000">
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="enableDnsLookup" checked>
+                                    <label class="form-check-label" for="enableDnsLookup">
+                                        Enable Reverse DNS Lookup
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-primary">
+                                <i class="fas fa-database me-2"></i>Database
+                            </h6>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="autoSaveResults" checked>
+                                    <label class="form-check-label" for="autoSaveResults">
+                                        Auto-save Scan Results
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="maxResultsHistory" class="form-label">Max Results History</label>
+                                <select class="form-select" id="maxResultsHistory">
+                                    <option value="100">100 scans</option>
+                                    <option value="500" selected>500 scans</option>
+                                    <option value="1000">1000 scans</option>
+                                    <option value="-1">Unlimited</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-primary">
+                                <i class="fas fa-shield-alt me-2"></i>Security
+                            </h6>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="enableVulnScanning" checked>
+                                    <label class="form-check-label" for="enableVulnScanning">
+                                        Enable Vulnerability Scanning
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="enableHoneypotDetection" checked>
+                                    <label class="form-check-label" for="enableHoneypotDetection">
+                                        Enable Honeypot Detection
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveSettings()">
+                        <i class="fas fa-save me-2"></i>Save Settings
+                    </button>
+                    <button type="button" class="btn btn-outline-danger" onclick="resetSettings()">
+                        <i class="fas fa-undo me-2"></i>Reset to Defaults
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="helpModalLabel">
+                        <i class="fas fa-question-circle me-2"></i>Help & Support
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-primary">Quick Start Guide</h6>
+                            <div class="card bg-light mb-3">
+                                <div class="card-body">
+                                    <h6 class="card-title">1. Network Scanning</h6>
+                                    <p class="card-text">Navigate to the Network Scanner tab and enter your target IP range in CIDR notation (e.g., 192.168.1.0/24).</p>
+                                </div>
+                            </div>
+                            <div class="card bg-light mb-3">
+                                <div class="card-body">
+                                    <h6 class="card-title">2. Port Scanning</h6>
+                                    <p class="card-text">Specify port ranges or common ports to scan. Use comma-separated values or ranges (e.g., 22,80,443 or 1-1000).</p>
+                                </div>
+                            </div>
+                            <div class="card bg-light mb-3">
+                                <div class="card-body">
+                                    <h6 class="card-title">3. View Results</h6>
+                                    <p class="card-text">Check the Results tab to view your scan history and export results in various formats.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-primary">Keyboard Shortcuts</h6>
+                            <table class="table table-sm">
+                                <tr><td><kbd>Ctrl</kbd> + <kbd>S</kbd></td><td>Start scan</td></tr>
+                                <tr><td><kbd>Ctrl</kbd> + <kbd>R</kbd></td><td>Refresh results</td></tr>
+                                <tr><td><kbd>Ctrl</kbd> + <kbd>E</kbd></td><td>Export results</td></tr>
+                                <tr><td><kbd>Esc</kbd></td><td>Stop current scan</td></tr>
+                                <tr><td><kbd>F1</kbd></td><td>Show this help</td></tr>
+                            </table>
+                            
+                            <h6 class="text-primary mt-4">API Endpoints</h6>
+                            <div class="list-group">
+                                <a href="/swagger" target="_blank" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-book me-2"></i>Complete API Documentation
+                                </a>
+                                <a href="/api/NetworkScan/status" target="_blank" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-heartbeat me-2"></i>API Status Check
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="https://github.com/jomardyan/On-Prem-Network-InfraIQ" target="_blank" class="btn btn-primary">
+                        <i class="fab fa-github me-2"></i>View on GitHub
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Modal -->
+    <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="aboutModalLabel">
+                        <i class="fas fa-info-circle me-2"></i>About On-Prem Network InfraIQ
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <i class="fas fa-network-wired fa-4x text-primary mb-3"></i>
+                    <h4>On-Prem Network InfraIQ</h4>
+                    <p class="text-muted">Version 2.1.0</p>
+                    <p>Enterprise-grade network discovery and security assessment platform built with .NET 8.0 and modern web technologies.</p>
+                    
+                    <hr>
+                    
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <i class="fas fa-code fa-2x text-info"></i>
+                            <div class="mt-2">
+                                <strong>175+</strong>
+                                <br><small class="text-muted">Unit Tests</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-database fa-2x text-success"></i>
+                            <div class="mt-2">
+                                <strong>SQLite</strong>
+                                <br><small class="text-muted">Database</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-shield-alt fa-2x text-warning"></i>
+                            <div class="mt-2">
+                                <strong>30+</strong>
+                                <br><small class="text-muted">Vuln Types</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/dashboard.js"></script>
+    
+    <!-- Additional JavaScript -->
+    <script>
+        // Enhanced theme toggle functionality
+        function toggleTheme() {
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            // Use dashboard instance if available for consistent theming
+            if (typeof window.dashboard !== 'undefined' && window.dashboard.updateTheme) {
+                window.dashboard.updateTheme(newTheme);
+            } else {
+                // Fallback for pages without dashboard
+                updateThemeDirectly(newTheme);
+            }
+        }
+        
+        function updateThemeDirectly(theme) {
+            localStorage.setItem('theme', theme);
+            document.documentElement.setAttribute('data-theme', theme);
+            document.body.setAttribute('data-bs-theme', theme);
+            
+            const icon = document.querySelector('#theme-toggle i');
+            if (icon) {
+                icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            }
+            
+            // Update body classes
+            if (theme === 'dark') {
+                document.body.classList.remove('bg-light', 'text-dark');
+                document.body.classList.add('bg-dark', 'text-light');
+            } else {
+                document.body.classList.remove('bg-dark', 'text-light');
+                document.body.classList.add('bg-light', 'text-dark');
+            }
+        }
+        
+        // Enhanced theme initialization
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            
+            updateThemeDirectly(theme);
+        }
+        
+        // Initialize theme immediately
+        initializeTheme();
+        
+        // Global search functionality
+        document.getElementById('globalSearch')?.addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            if (query.length > 2) {
+                // Implement global search logic here
+                console.log('Searching for:', query);
+            }
+        });
+        
+        // Settings functionality
+        function loadSettings() {
+            const settings = {
+                theme: localStorage.getItem('theme') || 'dark',
+                enableAnimations: localStorage.getItem('enableAnimations') !== 'false',
+                enableSounds: localStorage.getItem('enableSounds') === 'true',
+                maxConcurrentScans: parseInt(localStorage.getItem('maxConcurrentScans')) || 200,
+                defaultTimeout: parseInt(localStorage.getItem('defaultTimeout')) || 5000,
+                enableDnsLookup: localStorage.getItem('enableDnsLookup') !== 'false',
+                autoSaveResults: localStorage.getItem('autoSaveResults') !== 'false',
+                maxResultsHistory: parseInt(localStorage.getItem('maxResultsHistory')) || 500,
+                enableVulnScanning: localStorage.getItem('enableVulnScanning') !== 'false',
+                enableHoneypotDetection: localStorage.getItem('enableHoneypotDetection') !== 'false'
+            };
+            
+            // Apply settings to UI
+            const themeSelect = document.getElementById('themeSelect');
+            if (themeSelect) themeSelect.value = settings.theme;
+            
+            const enableAnimations = document.getElementById('enableAnimations');
+            if (enableAnimations) enableAnimations.checked = settings.enableAnimations;
+            
+            const enableSounds = document.getElementById('enableSounds');
+            if (enableSounds) enableSounds.checked = settings.enableSounds;
+            
+            const maxConcurrentScans = document.getElementById('maxConcurrentScans');
+            if (maxConcurrentScans) {
+                maxConcurrentScans.value = settings.maxConcurrentScans;
+                document.getElementById('maxConcurrentScansValue').textContent = settings.maxConcurrentScans;
+            }
+            
+            const defaultTimeout = document.getElementById('defaultTimeout');
+            if (defaultTimeout) defaultTimeout.value = settings.defaultTimeout;
+            
+            const enableDnsLookup = document.getElementById('enableDnsLookup');
+            if (enableDnsLookup) enableDnsLookup.checked = settings.enableDnsLookup;
+            
+            const autoSaveResults = document.getElementById('autoSaveResults');
+            if (autoSaveResults) autoSaveResults.checked = settings.autoSaveResults;
+            
+            const maxResultsHistory = document.getElementById('maxResultsHistory');
+            if (maxResultsHistory) maxResultsHistory.value = settings.maxResultsHistory.toString();
+            
+            const enableVulnScanning = document.getElementById('enableVulnScanning');
+            if (enableVulnScanning) enableVulnScanning.checked = settings.enableVulnScanning;
+            
+            const enableHoneypotDetection = document.getElementById('enableHoneypotDetection');
+            if (enableHoneypotDetection) enableHoneypotDetection.checked = settings.enableHoneypotDetection;
+            
+            return settings;
+        }
+        
+        function saveSettings() {
+            const settings = {
+                theme: document.getElementById('themeSelect')?.value || 'dark',
+                enableAnimations: document.getElementById('enableAnimations')?.checked || false,
+                enableSounds: document.getElementById('enableSounds')?.checked || false,
+                maxConcurrentScans: parseInt(document.getElementById('maxConcurrentScans')?.value) || 200,
+                defaultTimeout: parseInt(document.getElementById('defaultTimeout')?.value) || 5000,
+                enableDnsLookup: document.getElementById('enableDnsLookup')?.checked || false,
+                autoSaveResults: document.getElementById('autoSaveResults')?.checked || false,
+                maxResultsHistory: parseInt(document.getElementById('maxResultsHistory')?.value) || 500,
+                enableVulnScanning: document.getElementById('enableVulnScanning')?.checked || false,
+                enableHoneypotDetection: document.getElementById('enableHoneypotDetection')?.checked || false
+            };
+            
+            // Save to localStorage
+            Object.keys(settings).forEach(key => {
+                localStorage.setItem(key, settings[key].toString());
+            });
+            
+            // Apply theme immediately
+            if (settings.theme !== 'auto') {
+                updateThemeDirectly(settings.theme);
+            } else {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                updateThemeDirectly(prefersDark ? 'dark' : 'light');
+            }
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('settingsModal'));
+            if (modal) modal.hide();
+            
+            // Show success notification
+            if (typeof window.dashboard !== 'undefined' && window.dashboard.showNotification) {
+                window.dashboard.showNotification('Settings saved successfully!', 'success', 2000);
+            }
+        }
+        
+        function resetSettings() {
+            if (confirm('Are you sure you want to reset all settings to their defaults?')) {
+                // Clear all settings from localStorage
+                const settingsKeys = [
+                    'theme', 'enableAnimations', 'enableSounds', 'maxConcurrentScans',
+                    'defaultTimeout', 'enableDnsLookup', 'autoSaveResults', 'maxResultsHistory',
+                    'enableVulnScanning', 'enableHoneypotDetection'
+                ];
+                
+                settingsKeys.forEach(key => localStorage.removeItem(key));
+                
+                // Reload settings with defaults
+                loadSettings();
+                
+                // Reset theme
+                updateThemeDirectly('dark');
+                
+                if (typeof window.dashboard !== 'undefined' && window.dashboard.showNotification) {
+                    window.dashboard.showNotification('Settings reset to defaults', 'info', 2000);
+                }
+            }
+        }
+        
+        // Load settings on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(loadSettings, 100); // Small delay to ensure elements are loaded
+            
+            // Update range slider display
+            const maxConcurrentScans = document.getElementById('maxConcurrentScans');
+            if (maxConcurrentScans) {
+                maxConcurrentScans.addEventListener('input', function() {
+                    document.getElementById('maxConcurrentScansValue').textContent = this.value;
+                });
+            }
+        });
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Only trigger if not in an input field
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            
+            if (e.ctrlKey) {
+                switch(e.key.toLowerCase()) {
+                    case 's':
+                        e.preventDefault();
+                        // Start scan - redirect to scanner page or trigger scan
+                        window.location.href = '/Dashboard/Scanner';
+                        break;
+                    case 'r':
+                        e.preventDefault();
+                        // Refresh results
+                        window.location.reload();
+                        break;
+                    case 'e':
+                        e.preventDefault();
+                        // Export results - redirect to results page
+                        window.location.href = '/Dashboard/Results';
+                        break;
+                }
+            } else if (e.key === 'Escape') {
+                // Stop scan or close modal
+                const openModal = document.querySelector('.modal.show');
+                if (openModal) {
+                    const modal = bootstrap.Modal.getInstance(openModal);
+                    if (modal) modal.hide();
+                }
+            } else if (e.key === 'F1') {
+                e.preventDefault();
+                // Show help modal
+                const helpModal = new bootstrap.Modal(document.getElementById('helpModal'));
+                helpModal.show();
+            }
+        });
+        
+        function showKeyboardShortcuts() {
+            if (typeof window.dashboard !== 'undefined' && window.dashboard.showNotification) {
+                window.dashboard.showNotification(`
+                    <strong>Keyboard Shortcuts:</strong><br>
+                    <kbd>Ctrl+S</kbd> Start scan<br>
+                    <kbd>Ctrl+R</kbd> Refresh results<br>
+                    <kbd>Ctrl+E</kbd> Export results<br>
+                    <kbd>Esc</kbd> Stop scan<br>
+                    <kbd>F1</kbd> Show help
+                `, 'info', 8000);
+            }
+        }
+        
+        // API examples
+        function showApiExamples() {
+            dashboard.showNotification(`
+                <strong>API Examples:</strong><br>
+                <code>curl /api/NetworkScan/status</code><br>
+                <code>curl -X POST /api/NetworkScan/scan-ip</code><br>
+                <a href="/swagger" target="_blank">View full documentation</a>
+            `, 'info', 8000);
+        }
+        
+        // Service Worker for PWA functionality
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(function(err) {
+                        console.log('ServiceWorker registration failed');
+                    });
+            });
+        }
+        
+        // Performance monitoring
+        window.addEventListener('load', function() {
+            if ('performance' in window) {
+                const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+                if (loadTime > 3000) {
+                    dashboard.showNotification('Page loaded slowly. Check your connection.', 'warning', 5000);
+                }
+            }
+        });
+    </script>
+    
+    <!-- SignalR for real-time updates -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.0/signalr.min.js" 
+            integrity="sha512-2R+2bSEFZpI5FpX6RKmk8uuNKnJo3IgLGu6b+1F6s2vGZs9CgZvHsejgn5SFvj2g6tYOfqJwIEoKJGhQs0QlA==" 
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,6 @@
+"""
+Type definitions and marker for type checking support.
+"""
+
+# This file indicates that the package supports type checking
+# Following PEP 561 specification

@@ -1,0 +1,110 @@
+@page
+@model Discovery.Web.Pages.ScanModel
+@{
+    ViewData["Title"] = "Real-Time Scan";
+}
+
+<h1>Real-Time Network Scan</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form id="scanForm">
+            <div class="form-group">
+                <label for="target">Target (CIDR):</label>
+                <input type="text" id="target" class="form-control" value="192.168.1.0/24" />
+            </div>
+            <div class="form-group">
+                <label for="ports">Ports (comma-separated):</label>
+                <input type="text" id="ports" class="form-control" value="80,443,8080" />
+            </div>
+            <button type="submit" class="btn btn-primary">Start Scan</button>
+            <button type="button" id="stopScanBtn" class="btn btn-danger" disabled>Stop Scan</button>
+        </form>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <h3>Scan Progress</h3>
+        <div id="progress"></div>
+        <h3>Results</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>IP Address</th>
+                    <th>Port</th>
+                    <th>Is Open</th>
+                    <th>Service</th>
+                </tr>
+            </thead>
+            <tbody id="resultsBody">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.9/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/scanhub")
+            .build();
+
+        let scanId = null;
+
+        document.getElementById("scanForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const target = document.getElementById("target").value;
+            const ports = document.getElementById("ports").value.split(',').map(p => parseInt(p.trim()));
+
+            fetch("/api/scan", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ target, ports })
+            })
+            .then(response => response.json())
+            .then(data => {
+                scanId = data.scanId;
+                document.getElementById("stopScanBtn").disabled = false;
+                document.getElementById("resultsBody").innerHTML = "";
+                document.getElementById("progress").innerText = "Scan started with ID: " + scanId;
+
+                connection.start().then(() => {
+                    connection.invoke("OnConnectedAsync", scanId).catch(err => console.error(err));
+                }).catch(err => console.error(err));
+            });
+        });
+
+        document.getElementById("stopScanBtn").addEventListener("click", function () {
+            if (scanId) {
+                fetch(`/api/scan/${scanId}`, { method: "DELETE" })
+                .then(() => {
+                    document.getElementById("progress").innerText = "Scan stopped.";
+                    document.getElementById("stopScanBtn").disabled = true;
+                });
+            }
+        });
+
+        connection.on("ReceiveScanUpdate", (update) => {
+            const progressDiv = document.getElementById("progress");
+            const resultsBody = document.getElementById("resultsBody");
+
+            if (update.status === "Completed") {
+                progressDiv.innerText = "Scan completed.";
+                document.getElementById("stopScanBtn").disabled = true;
+                update.results.forEach(result => {
+                    const row = `<tr><td>${result.ipAddress}</td><td>${result.port}</td><td>${result.isOpen}</td><td>${result.serviceName}</td></tr>`;
+                    resultsBody.innerHTML += row;
+                });
+            } else if (update.status === "Error") {
+                progressDiv.innerText = `Error: ${update.message}`;
+                document.getElementById("stopScanBtn").disabled = true;
+            } else {
+                 const row = `<tr><td>${update.ipAddress}</td><td>${update.port}</td><td>${update.isOpen}</td><td>${update.serviceName}</td></tr>`;
+                 resultsBody.innerHTML += row;
+            }
+        });
+    </script>
+}

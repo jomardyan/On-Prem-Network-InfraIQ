@@ -1,0 +1,237 @@
+version: '3.8'
+
+services:
+  # Main Network Discovery Application
+  network-discovery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: on-prem-network-infraiq
+    restart: unless-stopped
+    ports:
+      - "8080:5000"
+      - "8443:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Server=postgres;Database=NetworkDiscovery;User Id=netuser;Password=securepass123;
+      - Logging__LogLevel__Default=Information
+      - Redis__ConnectionString=redis:6379
+      - Elasticsearch__Url=http://elasticsearch:9200
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./reports:/app/reports
+      - ./config:/app/config
+    networks:
+      - network-discovery-net
+    depends_on:
+      - postgres
+      - redis
+      - elasticsearch
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1.0'
+        reservations:
+          memory: 1G
+          cpus: '0.5'
+
+  # PostgreSQL Database for storing scan results and configurations
+  postgres:
+    image: postgres:15-alpine
+    container_name: network-discovery-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: NetworkDiscovery
+      POSTGRES_USER: netuser
+      POSTGRES_PASSWORD: securepass123
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - network-discovery-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U netuser -d NetworkDiscovery"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for caching and session management
+  redis:
+    image: redis:7-alpine
+    container_name: network-discovery-cache
+    restart: unless-stopped
+    command: redis-server --requirepass cachepass123 --maxmemory 512mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - network-discovery-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # Elasticsearch for advanced search and analytics
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: network-discovery-search
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - network-discovery-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Kibana for data visualization and dashboards
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: network-discovery-kibana
+    restart: unless-stopped
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - SERVER_NAME=network-discovery-kibana
+    ports:
+      - "5601:5601"
+    networks:
+      - network-discovery-net
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5601/api/status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Grafana for monitoring and metrics
+  grafana:
+    image: grafana/grafana:10.2.0
+    container_name: network-discovery-grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SECURITY_DISABLE_GRAVATAR=true
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources
+    ports:
+      - "3000:3000"
+    networks:
+      - network-discovery-net
+
+  # Prometheus for metrics collection
+  prometheus:
+    image: prom/prometheus:v2.47.0
+    container_name: network-discovery-prometheus
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - network-discovery-net
+
+  # nginx reverse proxy with SSL termination
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: network-discovery-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./config/nginx/ssl:/etc/nginx/ssl
+      - ./logs/nginx:/var/log/nginx
+    networks:
+      - network-discovery-net
+    depends_on:
+      - network-discovery
+      - grafana
+      - kibana
+
+  # File server for report downloads
+  fileserver:
+    image: halverneus/static-file-server:latest
+    container_name: network-discovery-files
+    restart: unless-stopped
+    environment:
+      - FOLDER=/web
+      - PORT=8080
+    volumes:
+      - ./reports:/web
+    ports:
+      - "8090:8080"
+    networks:
+      - network-discovery-net
+
+  # Scheduled scanner worker
+  scanner-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: network-discovery-worker
+    restart: unless-stopped
+    environment:
+      - WORKER_MODE=true
+      - ConnectionStrings__DefaultConnection=Server=postgres;Database=NetworkDiscovery;User Id=netuser;Password=securepass123;
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./config:/app/config
+    networks:
+      - network-discovery-net
+    depends_on:
+      - postgres
+      - redis
+
+networks:
+  network-discovery-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  elasticsearch_data:
+    driver: local
+  grafana_data:
+    driver: local
+  prometheus_data:
+    driver: local

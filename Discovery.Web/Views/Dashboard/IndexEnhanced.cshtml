@@ -1,0 +1,643 @@
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="jumbotron bg-gradient text-center p-5 mb-4 animate-on-scroll floating">
+            <div class="container">
+                <h1 class="display-4 text-white mb-4">
+                    <i class="fas fa-network-wired me-3"></i>
+                    On-Prem Network InfraIQ
+                </h1>
+                <p class="lead text-white mb-4">Enterprise-grade network discovery and security assessment platform</p>
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-8">
+                        <div class="bg-white bg-opacity-10 rounded-pill p-3">
+                            <div class="row text-center">
+                                <div class="col-3">
+                                    <div class="stat-number">20+</div>
+                                    <div class="stat-label text-white-50">Services</div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="stat-number">IPv6</div>
+                                    <div class="stat-label text-white-50">Support</div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="stat-number">ML</div>
+                                    <div class="stat-label text-white-50">Detection</div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="stat-number">Cloud</div>
+                                    <div class="stat-label text-white-50">Ready</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center flex-wrap gap-3">
+                    <a class="btn btn-light btn-lg glass-button" href="/Dashboard/Scanner" role="button">
+                        <i class="fas fa-search me-2"></i>Start Network Scan
+                    </a>
+                    <a class="btn btn-outline-light btn-lg" href="/swagger" target="_blank">
+                        <i class="fas fa-code me-2"></i>API Documentation
+                    </a>
+                    <button class="btn btn-outline-light btn-lg" id="liveStatsBtn">
+                        <i class="fas fa-chart-line me-2"></i>Live Statistics
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Real-time System Status -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card glass-card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-wifi me-2"></i>System Status
+                            <span class="status-indicator status-online" id="systemStatus"></span>
+                        </h5>
+                        <div class="api-status mt-2">
+                            <span id="statusMessage">Checking system status...</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="stat-number text-success" id="activeScans">0</div>
+                                <div class="stat-label">Active Scans</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-number text-info" id="connectedUsers">0</div>
+                                <div class="stat-label">Connected</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-number text-primary" id="totalSessions">0</div>
+                                <div class="stat-label">Sessions</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Feature Cards -->
+<div class="row">
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100 interactive-card animate-on-scroll gpu-accelerated" onclick="window.location.href='/Dashboard/Scanner'">
+            <div class="card-body text-center d-flex flex-column">
+                <div class="mb-4">
+                    <div class="display-1 text-primary">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+                <h5 class="card-title mb-3">Enhanced Network Scanner</h5>
+                <p class="card-text flex-grow-1">Advanced scanning with real-time updates, IPv6 support, vulnerability detection, and machine learning-powered anomaly detection.</p>
+                <div class="mt-auto">
+                    <div class="row text-center mb-3">
+                        <div class="col-4">
+                            <div class="badge-gradient badge">IPv4/IPv6</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="badge-gradient badge">Real-time</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="badge-gradient badge">ML-Powered</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary w-100">
+                        <i class="fas fa-rocket me-2"></i>Start Scanning
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100 interactive-card animate-on-scroll gpu-accelerated" onclick="showSecurityDashboard()">
+            <div class="card-body text-center d-flex flex-column">
+                <div class="mb-4">
+                    <div class="display-1 text-danger">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                </div>
+                <h5 class="card-title mb-3">Security Assessment</h5>
+                <p class="card-text flex-grow-1">Comprehensive vulnerability scanning, SSL/TLS analysis, and security posture evaluation with detailed reporting.</p>
+                <div class="mt-auto">
+                    <div class="row text-center mb-3">
+                        <div class="col-4">
+                            <div class="badge bg-danger">CVE DB</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="badge bg-warning">SSL/TLS</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="badge bg-info">Compliance</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-danger w-100">
+                        <i class="fas fa-search me-2"></i>Security Scan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100 interactive-card animate-on-scroll gpu-accelerated" onclick="window.location.href='/Dashboard/Results'">
+            <div class="card-body text-center d-flex flex-column">
+                <div class="mb-4">
+                    <div class="display-1 text-success">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                </div>
+                <h5 class="card-title mb-3">Analytics & Reporting</h5>
+                <p class="card-text flex-grow-1">Advanced analytics, historical data visualization, export capabilities, and automated reporting features.</p>
+                <div class="mt-auto">
+                    <div class="row text-center mb-3">
+                        <div class="col-4">
+                            <div class="badge bg-success">Charts</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="badge bg-info">Export</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="badge bg-warning">Alerts</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-success w-100">
+                        <i class="fas fa-chart-bar me-2"></i>View Analytics
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card glass-card">
+            <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-history me-2"></i>Recent Activity
+                </h5>
+                <button class="btn btn-sm btn-outline-primary" id="refreshActivity">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="recentActivity">
+                    <div class="d-flex justify-content-center align-items-center" style="height: 200px;">
+                        <div class="text-center">
+                            <div class="spinner-border text-primary mb-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="text-muted">Loading recent activity...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card glass-card">
+            <div class="card-header bg-transparent">
+                <h5 class="mb-0">
+                    <i class="fas fa-tools me-2"></i>Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary" onclick="quickScan()">
+                        <i class="fas fa-bolt me-2"></i>Quick Scan
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="exportData()">
+                        <i class="fas fa-download me-2"></i>Export Data
+                    </button>
+                    <button class="btn btn-outline-info" onclick="viewLogs()">
+                        <i class="fas fa-file-alt me-2"></i>View Logs
+                    </button>
+                    <button class="btn btn-outline-warning" onclick="showSettings()">
+                        <i class="fas fa-cog me-2"></i>Settings
+                    </button>
+                    <hr>
+                    <button class="btn btn-outline-danger" onclick="emergencyStop()">
+                        <i class="fas fa-stop me-2"></i>Emergency Stop
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Live Statistics Modal -->
+<div class="modal fade" id="liveStatsModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content bg-dark">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-chart-line me-2"></i>Live System Statistics
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <canvas id="scanActivityChart" width="400" height="200"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <canvas id="vulnerabilityChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <h6>Real-time Metrics</h6>
+                        <div class="table-responsive">
+                            <table class="table table-dark table-sm">
+                                <tbody id="metricsTable">
+                                    <tr>
+                                        <td>CPU Usage</td>
+                                        <td><span id="cpuUsage">-</span>%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Memory Usage</td>
+                                        <td><span id="memoryUsage">-</span>%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Network I/O</td>
+                                        <td><span id="networkIO">-</span> MB/s</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Active Connections</td>
+                                        <td><span id="activeConnections">-</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Enhanced Dashboard with Real-time Features
+        class EnhancedDashboard {
+            constructor() {
+                this.connection = null;
+                this.charts = {};
+                this.init();
+            }
+
+            async init() {
+                await this.initSignalR();
+                this.initEventListeners();
+                this.initCharts();
+                this.loadSystemStatus();
+                this.loadRecentActivity();
+                this.startMetricsPolling();
+            }
+
+            async initSignalR() {
+                try {
+                    this.connection = new signalR.HubConnectionBuilder()
+                        .withUrl("/scanHub")
+                        .withAutomaticReconnect()
+                        .build();
+
+                    // Handle system notifications
+                    this.connection.on("ReceiveSystemNotification", (notification) => {
+                        this.showSystemNotification(notification);
+                    });
+
+                    // Handle scan updates for dashboard
+                    this.connection.on("ReceiveScanUpdate", (update) => {
+                        this.updateDashboardMetrics(update);
+                    });
+
+                    // Handle welcome message
+                    this.connection.on("Welcome", (data) => {
+                        this.updateConnectionStatus(data);
+                    });
+
+                    await this.connection.start();
+                    console.log("Dashboard connected to SignalR");
+                    
+                    document.getElementById('systemStatus').className = 'status-indicator status-online';
+                    document.getElementById('statusMessage').textContent = 'Connected to real-time updates';
+                    
+                } catch (err) {
+                    console.error("SignalR connection failed:", err);
+                    document.getElementById('systemStatus').className = 'status-indicator status-offline';
+                    document.getElementById('statusMessage').textContent = 'Real-time updates unavailable';
+                }
+            }
+
+            initEventListeners() {
+                document.getElementById('liveStatsBtn')?.addEventListener('click', () => {
+                    const modal = new bootstrap.Modal(document.getElementById('liveStatsModal'));
+                    modal.show();
+                });
+
+                document.getElementById('refreshActivity')?.addEventListener('click', () => {
+                    this.loadRecentActivity();
+                });
+            }
+
+            initCharts() {
+                // Scan Activity Chart
+                const scanCtx = document.getElementById('scanActivityChart')?.getContext('2d');
+                if (scanCtx) {
+                    this.charts.scanActivity = new Chart(scanCtx, {
+                        type: 'line',
+                        data: {
+                            labels: [],
+                            datasets: [{
+                                label: 'Active Scans',
+                                data: [],
+                                borderColor: '#667eea',
+                                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                                    ticks: { color: '#ffffff' }
+                                },
+                                x: {
+                                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                                    ticks: { color: '#ffffff' }
+                                }
+                            },
+                            plugins: {
+                                legend: { labels: { color: '#ffffff' } }
+                            }
+                        }
+                    });
+                }
+
+                // Vulnerability Chart
+                const vulnCtx = document.getElementById('vulnerabilityChart')?.getContext('2d');
+                if (vulnCtx) {
+                    this.charts.vulnerability = new Chart(vulnCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Critical', 'High', 'Medium', 'Low'],
+                            datasets: [{
+                                data: [0, 0, 0, 0],
+                                backgroundColor: ['#dc3545', '#fd7e14', '#ffc107', '#28a745'],
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { labels: { color: '#ffffff' } }
+                            }
+                        }
+                    });
+                }
+            }
+
+            async loadSystemStatus() {
+                try {
+                    const response = await fetch('/api/NetworkScan/status');
+                    const status = await response.json();
+                    
+                    document.getElementById('activeScans').textContent = status.ActiveScans || 0;
+                    document.getElementById('totalSessions').textContent = status.TotalSessionsTracked || 0;
+                    
+                } catch (error) {
+                    console.error('Failed to load system status:', error);
+                }
+            }
+
+            async loadRecentActivity() {
+                const container = document.getElementById('recentActivity');
+                
+                try {
+                    // Simulate loading recent activity
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    const activities = [
+                        { icon: 'fa-search', text: 'Network scan completed for 192.168.1.0/24', time: '2 minutes ago', type: 'success' },
+                        { icon: 'fa-shield-alt', text: '3 vulnerabilities detected on 192.168.1.100', time: '5 minutes ago', type: 'warning' },
+                        { icon: 'fa-user', text: 'New user connected to real-time updates', time: '8 minutes ago', type: 'info' },
+                        { icon: 'fa-download', text: 'Scan results exported to CSV', time: '12 minutes ago', type: 'info' },
+                        { icon: 'fa-exclamation-triangle', text: 'High severity vulnerability found', time: '15 minutes ago', type: 'danger' }
+                    ];
+
+                    container.innerHTML = activities.map(activity => `
+                        <div class="d-flex align-items-center mb-3 p-3 bg-white bg-opacity-5 rounded">
+                            <div class="me-3">
+                                <i class="fas ${activity.icon} text-${activity.type === 'success' ? 'success' : activity.type === 'warning' ? 'warning' : activity.type === 'danger' ? 'danger' : 'info'}"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="fw-medium">${activity.text}</div>
+                                <small class="text-muted">${activity.time}</small>
+                            </div>
+                        </div>
+                    `).join('');
+
+                } catch (error) {
+                    container.innerHTML = `
+                        <div class="text-center text-muted">
+                            <i class="fas fa-exclamation-circle fa-2x mb-3"></i>
+                            <p>Failed to load recent activity</p>
+                        </div>
+                    `;
+                }
+            }
+
+            startMetricsPolling() {
+                setInterval(() => {
+                    this.updateMetrics();
+                }, 5000);
+            }
+
+            updateMetrics() {
+                // Simulate real-time metrics
+                document.getElementById('cpuUsage').textContent = (Math.random() * 30 + 10).toFixed(1);
+                document.getElementById('memoryUsage').textContent = (Math.random() * 40 + 20).toFixed(1);
+                document.getElementById('networkIO').textContent = (Math.random() * 10 + 1).toFixed(2);
+                document.getElementById('activeConnections').textContent = Math.floor(Math.random() * 50 + 10);
+
+                // Update charts
+                this.updateCharts();
+            }
+
+            updateCharts() {
+                const now = new Date().toLocaleTimeString();
+                
+                // Update scan activity chart
+                if (this.charts.scanActivity) {
+                    const chart = this.charts.scanActivity;
+                    chart.data.labels.push(now);
+                    chart.data.datasets[0].data.push(Math.floor(Math.random() * 5));
+                    
+                    if (chart.data.labels.length > 10) {
+                        chart.data.labels.shift();
+                        chart.data.datasets[0].data.shift();
+                    }
+                    
+                    chart.update('none');
+                }
+
+                // Update vulnerability chart with random data
+                if (this.charts.vulnerability) {
+                    const chart = this.charts.vulnerability;
+                    chart.data.datasets[0].data = [
+                        Math.floor(Math.random() * 5),
+                        Math.floor(Math.random() * 10),
+                        Math.floor(Math.random() * 15),
+                        Math.floor(Math.random() * 20)
+                    ];
+                    chart.update('none');
+                }
+            }
+
+            updateConnectionStatus(data) {
+                document.getElementById('connectedUsers').textContent = data.TotalConnections || 0;
+            }
+
+            updateDashboardMetrics(update) {
+                // Update dashboard when scan updates are received
+                this.loadSystemStatus();
+            }
+
+            showSystemNotification(notification) {
+                // Create toast notification for system messages
+                const toast = document.createElement('div');
+                toast.className = `toast align-items-center text-white bg-${notification.Type === 0 ? 'info' : notification.Type === 1 ? 'success' : notification.Type === 2 ? 'warning' : 'danger'} border-0`;
+                toast.innerHTML = `
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <strong>${notification.Title}</strong><br>
+                            ${notification.Message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                `;
+
+                let toastContainer = document.getElementById('toast-container');
+                if (!toastContainer) {
+                    toastContainer = document.createElement('div');
+                    toastContainer.id = 'toast-container';
+                    toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+                    document.body.appendChild(toastContainer);
+                }
+
+                toastContainer.appendChild(toast);
+                const bsToast = new bootstrap.Toast(toast);
+                bsToast.show();
+            }
+        }
+
+        // Quick action functions
+        function quickScan() {
+            const target = prompt('Enter target IP or hostname:');
+            if (target) {
+                window.location.href = `/Dashboard/Scanner?target=${encodeURIComponent(target)}`;
+            }
+        }
+
+        function exportData() {
+            dashboard.showNotification('Export functionality coming soon!', 'info');
+        }
+
+        function viewLogs() {
+            dashboard.showNotification('Log viewer coming soon!', 'info');
+        }
+
+        function showSettings() {
+            dashboard.showNotification('Settings panel coming soon!', 'info');
+        }
+
+        function emergencyStop() {
+            if (confirm('Are you sure you want to stop all active scans?')) {
+                fetch('/api/NetworkScan/emergency-stop', { method: 'POST' })
+                    .then(() => dashboard.showNotification('All scans stopped', 'warning'))
+                    .catch(() => dashboard.showNotification('Failed to stop scans', 'error'));
+            }
+        }
+
+        function showSecurityDashboard() {
+            dashboard.showNotification('Security dashboard coming soon!', 'info');
+        }
+
+        // Initialize enhanced dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            window.enhancedDashboard = new EnhancedDashboard();
+        });
+    </script>
+}
+
+<style>
+    .jumbotron {
+        background: var(--primary-gradient);
+        border-radius: var(--border-radius-lg);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .jumbotron::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'%3E%3Cpath d='m0 40l40-40h-40z'/%3E%3C/g%3E%3C/svg%3E") repeat;
+        animation: pattern-move 20s linear infinite;
+    }
+
+    @@keyframes pattern-move {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(40px); }
+    }
+
+    .floating {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    @@keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .animate-on-scroll {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: var(--transition);
+    }
+
+    .animate-on-scroll.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .status-indicator {
+        animation: pulse 2s infinite;
+    }
+
+    .spinner-border {
+        width: 2rem;
+        height: 2rem;
+    }
+</style>

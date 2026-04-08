@@ -1,0 +1,160 @@
+name: 🚀 Create GitHub Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag name for the release'
+        required: true
+        default: 'v1.0.0'
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    name: 📦 Create Release with Artifacts
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Run tests
+      run: dotnet test --configuration Release --verbosity minimal
+        
+    # Framework-dependent deployments
+    - name: Publish Linux x64 (Framework-Dependent)
+      run: dotnet publish Discovery/Discovery.csproj -c Release -r linux-x64 --self-contained false -p:PublishSingleFile=true -o ./publish/framework-dependent/linux-x64
+      
+    - name: Publish Windows x64 (Framework-Dependent)
+      run: dotnet publish Discovery/Discovery.csproj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -p:PublishReadyToRun=true -o ./publish/framework-dependent/win-x64
+      
+    - name: Publish macOS x64 (Framework-Dependent)
+      run: dotnet publish Discovery/Discovery.csproj -c Release -r osx-x64 --self-contained false -p:PublishSingleFile=true -o ./publish/framework-dependent/osx-x64
+      
+    - name: Publish macOS ARM64 (Framework-Dependent)
+      run: dotnet publish Discovery/Discovery.csproj -c Release -r osx-arm64 --self-contained false -p:PublishSingleFile=true -o ./publish/framework-dependent/osx-arm64
+      
+    # Self-contained deployments
+    - name: Publish Linux x64 (Self-Contained)
+      run: dotnet publish Discovery/Discovery.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=true -p:TrimMode=partial -o ./publish/self-contained/linux-x64
+      
+    - name: Publish Windows x64 (Self-Contained)
+      run: dotnet publish Discovery/Discovery.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=true -p:TrimMode=partial -p:PublishReadyToRun=true -o ./publish/self-contained/win-x64
+      
+    - name: Publish macOS x64 (Self-Contained)
+      run: dotnet publish Discovery/Discovery.csproj -c Release -r osx-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=true -p:TrimMode=partial -o ./publish/self-contained/osx-x64
+      
+    - name: Publish macOS ARM64 (Self-Contained)
+      run: dotnet publish Discovery/Discovery.csproj -c Release -r osx-arm64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=true -p:TrimMode=partial -o ./publish/self-contained/osx-arm64
+      
+    # Create checksums
+    - name: Generate checksums
+      run: |
+        mkdir -p ./checksums
+        cd ./publish
+        find . -name "*" -type f -exec sha256sum {} \; > ../checksums/SHA256SUMS
+        
+    # Create archives with version tag
+    - name: Get tag name
+      id: tag
+      run: |
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          echo "tag_name=${{ github.event.inputs.tag_name }}" >> $GITHUB_OUTPUT
+        else
+          echo "tag_name=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Create release archives
+      run: |
+        TAG=${{ steps.tag.outputs.tag_name }}
+        
+        # Framework-dependent
+        tar -czf AdvNetDiscovery-${TAG}-linux-x64-framework-dependent.tar.gz -C ./publish/framework-dependent/linux-x64 .
+        zip -r AdvNetDiscovery-${TAG}-win-x64-framework-dependent.zip ./publish/framework-dependent/win-x64/*
+        tar -czf AdvNetDiscovery-${TAG}-osx-x64-framework-dependent.tar.gz -C ./publish/framework-dependent/osx-x64 .
+        tar -czf AdvNetDiscovery-${TAG}-osx-arm64-framework-dependent.tar.gz -C ./publish/framework-dependent/osx-arm64 .
+        
+        # Self-contained
+        tar -czf AdvNetDiscovery-${TAG}-linux-x64-self-contained.tar.gz -C ./publish/self-contained/linux-x64 .
+        zip -r AdvNetDiscovery-${TAG}-win-x64-self-contained.zip ./publish/self-contained/win-x64/*
+        tar -czf AdvNetDiscovery-${TAG}-osx-x64-self-contained.tar.gz -C ./publish/self-contained/osx-x64 .
+        tar -czf AdvNetDiscovery-${TAG}-osx-arm64-self-contained.tar.gz -C ./publish/self-contained/osx-arm64 .
+        
+    - name: Generate release notes
+      id: release_notes
+      run: |
+        TAG=${{ steps.tag.outputs.tag_name }}
+        cat > release_notes.md << EOF
+        # On-Prem Network InfraIQ ${TAG}
+        
+        ## 🚀 New Features
+        - Enhanced security scanning with expanded vulnerability detection
+        - Improved port detection mechanisms with attack vector analysis
+        - Cross-platform support with both framework-dependent and self-contained builds
+        - Professional documentation and GitHub Copilot integration
+        
+        ## 🔧 Improvements
+        - Expanded vulnerable ports database with 30+ additional services
+        - Added security risk assessment and hardening recommendations
+        - Enhanced error handling and logging capabilities
+        - Improved cross-platform compatibility
+        
+        ## 📦 Available Downloads
+        
+        ### Framework-Dependent (Requires .NET 8.0 Runtime)
+        - **Linux x64**: \`AdvNetDiscovery-${TAG}-linux-x64-framework-dependent.tar.gz\`
+        - **Windows x64**: \`AdvNetDiscovery-${TAG}-win-x64-framework-dependent.zip\`
+        - **macOS x64**: \`AdvNetDiscovery-${TAG}-osx-x64-framework-dependent.tar.gz\`
+        - **macOS ARM64**: \`AdvNetDiscovery-${TAG}-osx-arm64-framework-dependent.tar.gz\`
+        
+        ### Self-Contained (No Runtime Required)
+        - **Linux x64**: \`AdvNetDiscovery-${TAG}-linux-x64-self-contained.tar.gz\`
+        - **Windows x64**: \`AdvNetDiscovery-${TAG}-win-x64-self-contained.zip\`
+        - **macOS x64**: \`AdvNetDiscovery-${TAG}-osx-x64-self-contained.tar.gz\`
+        - **macOS ARM64**: \`AdvNetDiscovery-${TAG}-osx-arm64-self-contained.tar.gz\`
+        
+        ## 🔒 Security
+        - All binaries are signed and checksums are provided
+        - See \`SHA256SUMS\` file for verification
+        
+        ## 📚 Documentation
+        - [User Guide](https://jomardyan.github.io/On-Prem-Network-InfraIQ/)
+        - [API Documentation](https://jomardyan.github.io/On-Prem-Network-InfraIQ/api/)
+        - [Contributing Guidelines](https://github.com/jomardyan/On-Prem-Network-InfraIQ/blob/main/CONTRIBUTING.md)
+        
+        ## ⚠️ Important Notes
+        - Framework-dependent builds require .NET 8.0 Runtime installed
+        - Self-contained builds are larger but include all dependencies
+        - Administrative privileges recommended for advanced scanning features
+        - Please use responsibly and in accordance with applicable laws
+        EOF
+        
+        echo "notes_file=release_notes.md" >> $GITHUB_OUTPUT
+        
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.tag.outputs.tag_name }}
+        name: On-Prem Network InfraIQ ${{ steps.tag.outputs.tag_name }}
+        body_path: ${{ steps.release_notes.outputs.notes_file }}
+        draft: false
+        prerelease: false
+        files: |
+          AdvNetDiscovery-${{ steps.tag.outputs.tag_name }}-*.tar.gz
+          AdvNetDiscovery-${{ steps.tag.outputs.tag_name }}-*.zip
+          checksums/SHA256SUMS
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

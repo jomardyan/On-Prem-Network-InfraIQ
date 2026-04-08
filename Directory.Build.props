@@ -1,0 +1,13 @@
+<Project>
+  <!-- Centralized version and product information -->
+  <PropertyGroup>
+    <Version>2.2.0</Version>
+    <AssemblyVersion>2.2.0.0</AssemblyVersion>
+    <FileVersion>2.2.0.0</FileVersion>
+    <Product>On-Prem Network InfraIQ</Product>
+    <Description>Enterprise-grade on-premises network infrastructure intelligence and security assessment platform</Description>
+    <Authors>On-Prem Network InfraIQ Team</Authors>
+    <Copyright>Copyright © 2025</Copyright>
+    <Company>On-Prem Network InfraIQ Team</Company>
+  </PropertyGroup>
+</Project>

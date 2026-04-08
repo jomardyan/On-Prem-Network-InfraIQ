@@ -1,0 +1,211 @@
+@{
+    ViewData["Title"] = "Scan Results";
+}
+
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">
+            <i class="fas fa-list me-2"></i>
+            Scan Results
+        </h2>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-8">
+        <div class="card bg-secondary">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-filter me-2"></i>
+                    Filter Results
+                </h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" id="filterIp" placeholder="Filter by IP address">
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" id="filterService">
+                            <option value="">All Services</option>
+                            <option value="HTTP">HTTP</option>
+                            <option value="HTTPS">HTTPS</option>
+                            <option value="SSH">SSH</option>
+                            <option value="FTP">FTP</option>
+                            <option value="Telnet">Telnet</option>
+                            <option value="DNS">DNS</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" id="filterPort">
+                            <option value="">All Ports</option>
+                            <option value="22">22 (SSH)</option>
+                            <option value="80">80 (HTTP)</option>
+                            <option value="443">443 (HTTPS)</option>
+                            <option value="21">21 (FTP)</option>
+                            <option value="23">23 (Telnet)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-outline-light" id="clearFilters">
+                            <i class="fas fa-times me-1"></i>Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card bg-info text-white">
+            <div class="card-body text-center">
+                <h5 class="card-title">
+                    <i class="fas fa-database me-2"></i>
+                    Data Management
+                </h5>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-light" id="loadSampleData">
+                        <i class="fas fa-plus me-1"></i>Load Sample Data
+                    </button>
+                    <button class="btn btn-outline-light" id="exportAllResults">
+                        <i class="fas fa-download me-1"></i>Export All
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card bg-dark border-success">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-table me-2"></i>
+                    Results Table
+                </h5>
+                <span class="badge bg-success" id="resultCount">0 results</span>
+            </div>
+            <div class="card-body">
+                <div id="noResultsMessage" class="text-center text-muted py-5">
+                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                    <p>No scan results available. Perform a scan from the <a href="/Dashboard/Scanner" class="text-decoration-none">Network Scanner</a> page.</p>
+                </div>
+                
+                <div id="resultsTable" style="display: none;">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        <i class="fas fa-globe me-1"></i>IP Address
+                                        <button class="btn btn-sm btn-outline-light ms-1" data-sort="ip">
+                                            <i class="fas fa-sort"></i>
+                                        </button>
+                                    </th>
+                                    <th scope="col">
+                                        <i class="fas fa-door-open me-1"></i>Port
+                                        <button class="btn btn-sm btn-outline-light ms-1" data-sort="port">
+                                            <i class="fas fa-sort"></i>
+                                        </button>
+                                    </th>
+                                    <th scope="col">
+                                        <i class="fas fa-cogs me-1"></i>Service
+                                        <button class="btn btn-sm btn-outline-light ms-1" data-sort="service">
+                                            <i class="fas fa-sort"></i>
+                                        </button>
+                                    </th>
+                                    <th scope="col">
+                                        <i class="fas fa-clock me-1"></i>Discovered
+                                        <button class="btn btn-sm btn-outline-light ms-1" data-sort="time">
+                                            <i class="fas fa-sort"></i>
+                                        </button>
+                                    </th>
+                                    <th scope="col">
+                                        <i class="fas fa-shield-alt me-1"></i>Status
+                                    </th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <nav aria-label="Results pagination" id="pagination" style="display: none;">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item">
+                                <a class="page-link bg-dark border-secondary text-light" href="#" id="prevPage">Previous</a>
+                            </li>
+                            <li class="page-item active">
+                                <span class="page-link bg-primary border-primary">1</span>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link bg-dark border-secondary text-light" href="#" id="nextPage">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <h4 id="statsHosts">0</h4>
+                <small>Unique Hosts</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body text-center">
+                <h4 id="statsOpenPorts">0</h4>
+                <small>Open Ports</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-dark">
+            <div class="card-body text-center">
+                <h4 id="statsServices">0</h4>
+                <small>Unique Services</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-danger text-white">
+            <div class="card-body text-center">
+                <h4 id="statsVulnerable">0</h4>
+                <small>Potential Issues</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Result Detail Modal -->
+<div class="modal fade" id="resultDetailModal" tabindex="-1" aria-labelledby="resultDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header">
+                <h5 class="modal-title" id="resultDetailModalLabel">
+                    <i class="fas fa-info-circle me-2"></i>Scan Result Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent">
+                    <!-- Content will be populated by JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/results.js"></script>
+}

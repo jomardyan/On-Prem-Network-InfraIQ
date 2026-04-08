@@ -1,0 +1,447 @@
+Metadata-Version: 2.4
+Name: onprem-network-infraiq
+Version: 2.1.0
+Summary: Enterprise-grade network discovery and security assessment platform
+Author-email: On-Prem Network InfraIQ Team <info@onprem-infraiq.com>
+Maintainer-email: On-Prem Network InfraIQ Team <info@onprem-infraiq.com>
+License: MIT
+Project-URL: Homepage, https://github.com/jomardyan/On-Prem-Network-InfraIQ
+Project-URL: Documentation, https://github.com/jomardyan/On-Prem-Network-InfraIQ/blob/main/README.md
+Project-URL: Repository, https://github.com/jomardyan/On-Prem-Network-InfraIQ
+Project-URL: Bug Tracker, https://github.com/jomardyan/On-Prem-Network-InfraIQ/issues
+Project-URL: Changelog, https://github.com/jomardyan/On-Prem-Network-InfraIQ/blob/main/CHANGELOG.md
+Keywords: network,security,scanning,vulnerability,assessment,cybersecurity
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Information Technology
+Classifier: Intended Audience :: System Administrators
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Topic :: Security
+Classifier: Topic :: System :: Networking
+Classifier: Topic :: System :: Systems Administration
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: aiohttp>=3.8.0
+Requires-Dist: python-nmap>=0.7.1
+Requires-Dist: scapy>=2.4.5
+Requires-Dist: dnspython>=2.2.0
+Requires-Dist: requests>=2.25.0
+Requires-Dist: rich>=13.0.0
+Requires-Dist: click>=8.0.0
+Requires-Dist: pydantic>=2.0.0
+Requires-Dist: cryptography>=3.4.0
+Requires-Dist: paramiko>=2.7.0
+Requires-Dist: impacket>=0.9.24
+Requires-Dist: psutil>=5.8.0
+Requires-Dist: netifaces>=0.11.0
+Requires-Dist: python-whois>=0.7.0
+Requires-Dist: shodan>=1.25.0
+Requires-Dist: censys>=2.1.0
+Requires-Dist: pandas>=1.3.0
+Requires-Dist: numpy>=1.21.0
+Requires-Dist: matplotlib>=3.4.0
+Requires-Dist: seaborn>=0.11.0
+Requires-Dist: pyyaml>=6.0.0
+Requires-Dist: jsonschema>=4.0.0
+Requires-Dist: sqlalchemy>=1.4.0
+Requires-Dist: alembic>=1.7.0
+Requires-Dist: fastapi>=0.70.0
+Requires-Dist: uvicorn>=0.15.0
+Requires-Dist: jinja2>=3.0.0
+Requires-Dist: httpx>=0.24.0
+Requires-Dist: python-multipart>=0.0.5
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0.0; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.21.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.0.0; extra == "dev"
+Requires-Dist: black>=22.0.0; extra == "dev"
+Requires-Dist: flake8>=5.0.0; extra == "dev"
+Requires-Dist: mypy>=1.0.0; extra == "dev"
+Requires-Dist: pre-commit>=2.20.0; extra == "dev"
+Requires-Dist: tox>=4.0.0; extra == "dev"
+Requires-Dist: build>=0.8.0; extra == "dev"
+Requires-Dist: twine>=4.0.0; extra == "dev"
+Provides-Extra: docs
+Requires-Dist: sphinx>=5.0.0; extra == "docs"
+Requires-Dist: sphinx-rtd-theme>=1.0.0; extra == "docs"
+Requires-Dist: sphinx-autodoc-typehints>=1.19.0; extra == "docs"
+Requires-Dist: myst-parser>=0.18.0; extra == "docs"
+Provides-Extra: all
+Requires-Dist: onprem-network-infraiq[dev,docs]; extra == "all"
+Dynamic: license-file
+
+<div align="center">
+
+<img src="OnPremLogo.png" alt="On-Prem Network InfraIQ Logo" width="400"/>
+
+# 🔍 On-Prem Network InfraIQ
+
+### Enterprise Network Intelligence at Your Fingertips
+
+[![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/download)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/version-2.1.0-green.svg?style=for-the-badge)](https://github.com/jomardyan/On-Prem-Network-InfraIQ/releases)
+[![Tests](https://img.shields.io/badge/tests-371+-brightgreen?style=for-the-badge)](https://github.com/jomardyan/On-Prem-Network-InfraIQ)
+
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey?style=flat-square)](https://github.com/jomardyan/On-Prem-Network-InfraIQ)
+[![Docker](https://img.shields.io/badge/docker-ready-2496ED?style=flat-square&logo=docker&logoColor=white)](https://hub.docker.com)
+[![API](https://img.shields.io/badge/API-OpenAPI%203.0-85EA2D?style=flat-square&logo=swagger&logoColor=white)](https://swagger.io)
+[![Security](https://img.shields.io/badge/security-A%2B-brightgreen?style=flat-square)](https://github.com/jomardyan/On-Prem-Network-InfraIQ)
+
+<p align="center">
+  <strong>Enterprise-grade network discovery and security assessment platform built with C# and .NET 8.0</strong>
+</p>
+
+<p align="center">
+  <a href="#-features">Features</a> •
+  <a href="#-quick-start">Quick Start</a> •
+  <a href="#-documentation">Documentation</a> •
+  <a href="#-demo">Demo</a> •
+  <a href="#-contributing">Contributing</a>
+</p>
+
+---
+
+<img src="OnPremLogo.png" alt="On-Prem Network InfraIQ" width="600"/>
+
+</div>
+
+## 🎯 Overview
+
+On-Prem Network InfraIQ is a powerful, cross-platform network scanning and security assessment tool designed for cybersecurity professionals, network administrators, and penetration testers. Built with modern C# and .NET 8.0, it provides comprehensive network infrastructure intelligence capabilities with both console and web-based interfaces.
+
+<div align="center">
+
+### 🚀 What's New in v2.1.0
+
+| Feature | Description |
+|---------|-------------|
+| 🌐 **Web Dashboard** | Professional responsive web UI with real-time scanning |
+| 💾 **Database Storage** | Entity Framework Core with SQLite/SQL Server support |
+| 📡 **IPv6 Enhanced** | Complete IPv6 support with neighbor discovery |
+| ☁️ **Cloud Ready** | AWS, Azure, and GCP integration support |
+| 🤖 **ML-Powered** | Machine learning anomaly detection |
+| 📊 **RESTful API** | OpenAPI 3.0 documented endpoints |
+
+</div>
+
+## ✨ Features
+
+<details open>
+<summary><b>🔍 Network Discovery & Scanning</b></summary>
+
+- ⚡ **High-Performance Scanning** - Concurrent scanning with CIDR support
+- 🎯 **Smart Service Detection** - Real-time service and version identification  
+- 🌐 **Comprehensive Protocol Support** - TCP, UDP, ICMP with IPv4/IPv6
+- 📊 **Live Results Dashboard** - Real-time updates and progress tracking
+- 🔧 **Flexible Configuration** - Custom ports, timeouts, and scan profiles
+
+</details>
+
+<details>
+<summary><b>🛡️ Security Assessment</b></summary>
+
+- 🔒 **30+ Vulnerability Checks** - CVE database integration
+- 📜 **Compliance Scanning** - DORA, PCI-DSS, HIPAA assessments
+- 🔐 **SSL/TLS Analysis** - Certificate validation and cipher analysis
+- 🏭 **Industrial Protocols** - Modbus, OPC-UA, SCADA detection
+- 🍯 **Honeypot Detection** - Advanced deception system identification
+
+</details>
+
+<details>
+<summary><b>🌐 Enterprise Features</b></summary>
+
+- 📱 **Web Dashboard** - Modern responsive interface
+- 🔌 **RESTful API** - Full API with Swagger documentation
+- 💾 **Database Backend** - Persistent storage with EF Core
+- 📊 **Export Options** - JSON, CSV, PDF report generation
+- 🔄 **CI/CD Ready** - Docker support and automation scripts
+
+</details>
+
+<details>
+<summary><b>🥷 Advanced Tools</b></summary>
+
+- 👻 **Stealth Operations** - Evasion techniques and timing control
+- 🔍 **OSINT Integration** - Intelligence gathering capabilities
+- 🎭 **Red Team Tools** - Payload generation and encoding
+- 🗺️ **Network Mapping** - Visual infrastructure discovery
+- 📡 **Active Directory** - AD enumeration and assessment
+
+</details>
+
+## 🚀 Quick Start
+
+<table>
+<tr>
+<td width="50%">
+
+### 📦 Install via Clone
+
+```bash
+git clone https://github.com/jomardyan/On-Prem-Network-InfraIQ.git
+cd On-Prem-Network-InfraIQ
+
+# Console Application
+dotnet run --project Discovery
+
+# Web Dashboard
+dotnet run --project Discovery.Web
+```
+
+</td>
+<td width="50%">
+
+### 🐳 Install via Docker
+
+```bash
+# Quick start with Docker Compose
+git clone https://github.com/jomardyan/On-Prem-Network-InfraIQ.git
+cd On-Prem-Network-InfraIQ
+docker-compose up
+
+# Access at http://localhost:5000
+```
+
+</td>
+</tr>
+</table>
+
+### 🌐 Web Dashboard
+
+<div align="center">
+<img src="https://via.placeholder.com/700x400/1a1a1a/00ff00?text=Web+Dashboard+Interface" alt="Web Dashboard" width="700"/>
+</div>
+
+Access the modern web interface at `http://localhost:5000` featuring:
+- 🎯 Point-and-click network scanning
+- 📊 Real-time results with live updates
+- 📈 Interactive charts and statistics
+- 📱 Responsive design for all devices
+- 🔌 REST API with Swagger UI
+
+## 💻 Tech Stack
+
+<div align="center">
+
+| Core | Frontend | Backend | DevOps |
+|------|----------|---------|---------|
+| ![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp&logoColor=white) | ![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white) | ![.NET](https://img.shields.io/badge/.NET-512BD4?style=for-the-badge&logo=dotnet&logoColor=white) | ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white) |
+| ![.NET 8](https://img.shields.io/badge/.NET%208-512BD4?style=for-the-badge&logo=dotnet&logoColor=white) | ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black) | ![EF Core](https://img.shields.io/badge/EF%20Core-512BD4?style=for-the-badge&logo=dotnet&logoColor=white) | ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white) |
+
+</div>
+
+## 📸 Demo
+
+### Console Interface
+```
+╔══════════════════════════════════════════════════════════════╗
+║          🔍 On-Prem Network InfraIQ v2.1.0                ║
+║              Professional Network Scanner                    ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║  🔍 Port Scanning        🔎 Network Discovery               ║
+║  🛠️  Network Utilities    🔐 Security Tools                 ║
+║  🥷 Red Team Tools       ⚙️  System                         ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+```
+
+### Live Scanning
+```
+🔍 Scanning 192.168.1.0/24 [████████████████░░░░] 75%
+
+┌─────────────────────────────────────────────────────┐
+│ Host           │ Service    │ Version   │ Status   │
+├─────────────────────────────────────────────────────┤
+│ 192.168.1.1   │ SSH        │ OpenSSH 8 │ 🟢 Secure │
+│ 192.168.1.5   │ HTTP       │ nginx 1.2 │ 🟡 Update │
+│ 192.168.1.10  │ SMB        │ v1        │ 🔴 Vuln   │
+└─────────────────────────────────────────────────────┘
+
+📊 25 hosts | 12 services | 2 vulnerabilities | ⏱️ 00:01:23
+```
+
+## 📖 Usage Examples
+
+<details>
+<summary><b>🌐 Network Range Scanning</b></summary>
+
+```bash
+# Console
+dotnet run --project Discovery
+# Select: "🌐 Scan local network range"
+# Input: 192.168.1.0/24
+
+# API
+curl -X POST http://localhost:5000/api/NetworkScan/scan-network \
+  -H "Content-Type: application/json" \
+  -d '{"networkRange":"192.168.1.0/24","ports":[22,80,443]}'
+```
+
+</details>
+
+<details>
+<summary><b>🛡️ Security Assessment</b></summary>
+
+```bash
+# DORA Compliance Check
+curl -X POST http://localhost:5000/api/Security/dora-assessment \
+  -H "Content-Type: application/json" \
+  -d '{"target":"192.168.1.1"}'
+
+# Vulnerability Scan
+curl -X POST http://localhost:5000/api/Security/vulnerability-scan \
+  -H "Content-Type: application/json" \
+  -d '{"targets":["192.168.1.0/24"],"deepScan":true}'
+```
+
+</details>
+
+## 📚 Documentation
+
+<div align="center">
+
+| Document | Description |
+|----------|-------------|
+| 📖 [User Guide](HELP.md) | Comprehensive usage instructions |
+| 🔧 [API Reference](docs/api/) | REST API documentation |
+| 🚀 [Deployment](docs/guides/) | Production deployment guide |
+| 🤝 [Contributing](CONTRIBUTING.md) | Development guidelines |
+| 📋 [Release Notes](CHANGELOG.md) | Version history and changes |
+
+</div>
+
+## 🧪 Testing
+
+```bash
+# Run all tests (371+ tests)
+dotnet test
+
+# Run with coverage
+dotnet test --collect:"XPlat Code Coverage"
+
+# Run specific categories
+dotnet test --filter "Category=Security"
+dotnet test --filter "Category=Performance"
+```
+
+## 🔧 Version Management
+
+<div align="center">
+
+### Dynamic Version System
+
+```bash
+# Show current version
+./scripts/version-manager.sh show
+
+# Semantic versioning
+./scripts/version-manager.sh bump major|minor|patch
+
+# Create release
+./scripts/release.sh
+
+# Tag version
+./scripts/version-manager.sh tag
+```
+
+</div>
+
+## 🤝 Contributing
+
+We love contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+<div align="center">
+
+### How to Contribute
+
+1️⃣ Fork the repository  
+2️⃣ Create your feature branch (`git checkout -b feature/AmazingFeature`)  
+3️⃣ Commit your changes (`git commit -m 'feat: add amazing feature'`)  
+4️⃣ Push to the branch (`git push origin feature/AmazingFeature`)  
+5️⃣ Open a Pull Request
+
+</div>
+
+## ⚖️ Legal & Ethics
+
+<div align="center">
+
+⚠️ **IMPORTANT NOTICE** ⚠️
+
+This tool is designed for **authorized security testing only**.
+
+✅ **Authorized Use Only** • ✅ **Written Permission Required** • ✅ **Educational Purpose**
+
+❌ **No Unauthorized Scanning** • ❌ **No Malicious Use** • ❌ **No Privacy Violation**
+
+</div>
+
+## 📈 Roadmap
+
+<div align="center">
+
+```mermaid
+graph LR
+    A[v2.1.0<br/>Current] --> B[v2.2.0<br/>Q2 2025]
+    B --> C[v3.0.0<br/>Q4 2025]
+    
+    B --> D[Plugin System]
+    B --> E[Mobile App]
+    
+    C --> F[AI Integration]
+    C --> G[Cloud Native]
+```
+
+</div>
+
+### 🎯 Upcoming Features
+
+- 🔌 **Plugin Architecture** - Extensible vulnerability modules
+- 📱 **Mobile Companion** - iOS/Android monitoring app
+- 🤖 **AI-Powered Analysis** - ML-based threat detection
+- ☁️ **Cloud Native** - Kubernetes-ready deployment
+- 🔗 **API Gateway** - Enterprise API management
+
+## 👥 Community & Support
+
+<div align="center">
+
+[![GitHub Stars](https://img.shields.io/github/stars/jomardyan/On-Prem-Network-InfraIQ?style=social)](https://github.com/jomardyan/On-Prem-Network-InfraIQ)
+[![GitHub Forks](https://img.shields.io/github/forks/jomardyan/On-Prem-Network-InfraIQ?style=social)](https://github.com/jomardyan/On-Prem-Network-InfraIQ)
+[![GitHub Issues](https://img.shields.io/github/issues/jomardyan/On-Prem-Network-InfraIQ)](https://github.com/jomardyan/On-Prem-Network-InfraIQ/issues)
+
+[⭐ Star this repo](https://github.com/jomardyan/On-Prem-Network-InfraIQ) • [🐛 Report Bug](https://github.com/jomardyan/On-Prem-Network-InfraIQ/issues) • [💡 Request Feature](https://github.com/jomardyan/On-Prem-Network-InfraIQ/issues)
+
+</div>
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+<div align="center">
+
+Special thanks to:
+
+[Spectre.Console](https://github.com/spectreconsole/spectre.console) • Security Community • Our Contributors
+
+---
+
+<p align="center">
+  <strong>Made with ❤️ for the cybersecurity community</strong>
+  <br>
+  <sub>Built by security professionals, for security professionals</sub>
+</p>
+
+</div>

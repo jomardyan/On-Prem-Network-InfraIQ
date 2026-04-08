@@ -1,0 +1,3 @@
+[console_scripts]
+infraiq = onprem_network_infraiq.cli:main
+onprem-infraiq = onprem_network_infraiq.cli:main

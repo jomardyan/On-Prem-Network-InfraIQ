@@ -1,0 +1,91 @@
+{
+  "scanSettings": {
+    "defaultTimeout": 2000,
+    "maxConcurrentConnections": 50,
+    "enableLiveResults": true,
+    "enableProgressBar": true,
+    "defaultPorts": [
+      22,
+      23,
+      25,
+      53,
+      80,
+      110,
+      143,
+      443,
+      993,
+      995,
+      3389,
+      5900
+    ],
+    "maxNetworkSize": 65536,
+    "warnOnLargeScans": true,
+    "skipHostDiscovery": false,
+    "pingTimeout": 1000,
+    "enableOsDetection": true,
+    "enableServiceDetection": true
+  },
+  "display": {
+    "useColors": true,
+    "showBanner": true,
+    "showSecurityWarnings": true,
+    "theme": "Default",
+    "enableAnimations": true,
+    "showDetailedResults": true,
+    "maxTableRows": 100,
+    "autoRefreshResults": false,
+    "refreshInterval": 5000
+  },
+  "security": {
+    "enableStealthMode": false,
+    "stealthDelayMin": 100,
+    "stealthDelayMax": 1000,
+    "randomizePortOrder": false,
+    "randomizeIpOrder": false,
+    "enableDecoyScanning": false,
+    "maxDecoyHosts": 3,
+    "enableHoneypotDetection": true,
+    "requireUserConfirmation": true,
+    "trustedNetworks": [],
+    "logSecurityEvents": true
+  },
+  "export": {
+    "defaultExportFormat": "json",
+    "exportDirectory": "results",
+    "autoExportResults": false,
+    "includeTimestamp": true,
+    "compressExports": false,
+    "maxExportFiles": 100,
+    "enableLogging": true,
+    "logLevel": "Info",
+    "logDirectory": "logs",
+    "maxLogFiles": 10,
+    "maxLogFileSize": 10485760
+  },
+  "advanced": {
+    "enableVulnerabilityScanning": true,
+    "enableSslCertificateChecks": true,
+    "enableBandwidthTesting": true,
+    "enableTraceroute": true,
+    "enableDnsEnumeration": true,
+    "enableNetworkMapping": true,
+    "customDnsServers": [
+      "8.8.8.8",
+      "1.1.1.1"
+    ],
+    "useCustomDnsServers": false,
+    "customHeaders": {},
+    "userAgent": "On-Prem-Network-InfraIQ/2.1.0"
+  },
+  "performance": {
+    "enableConnectionPooling": false,
+    "enableResultCaching": true,
+    "cacheExpirationMinutes": 30,
+    "enableMemoryOptimization": true,
+    "maxMemoryUsageMB": 128,
+    "enableGarbageCollection": true,
+    "gcInterval": 10000,
+    "enableParallelProcessing": true,
+    "maxDegreeOfParallelism": 1
+  }
+}

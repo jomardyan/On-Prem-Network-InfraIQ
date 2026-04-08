@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>Discovery.Web</AssemblyName>
+    <!-- Product, Version, Description, Authors, and Copyright are now inherited from Directory.Build.props -->
+    <Product>$(Product) - Web Dashboard</Product>
+    <Description>Modern web-based dashboard interface for $(Product) with real-time scanning, RESTful API, and enterprise features</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Discovery\Discovery.csproj" />
+  </ItemGroup>
+
+</Project>

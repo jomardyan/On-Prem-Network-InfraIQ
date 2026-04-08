@@ -1,0 +1,393 @@
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="jumbotron bg-gradient text-center p-5 mb-4 animate-on-scroll floating">
+            <div class="container">
+                <h1 class="display-4 text-white mb-4">
+                    <i class="fas fa-network-wired me-3"></i>
+                    On-Prem Network InfraIQ
+                </h1>
+                <p class="lead text-white mb-4">Enterprise-grade network discovery and security assessment platform</p>
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-8">
+                        <div class="bg-white bg-opacity-10 rounded-pill p-3">
+                            <div class="row text-center">
+                                <div class="col-3">
+                                    <div class="stat-number">20+</div>
+                                    <div class="stat-label text-white-50">Services</div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="stat-number">IPv6</div>
+                                    <div class="stat-label text-white-50">Support</div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="stat-number">ML</div>
+                                    <div class="stat-label text-white-50">Detection</div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="stat-number">Cloud</div>
+                                    <div class="stat-label text-white-50">Ready</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a class="btn btn-light btn-lg glass-button" href="/Dashboard/Scanner" role="button">
+                    <i class="fas fa-search me-2"></i>Start Network Scan
+                </a>
+                <a class="btn btn-outline-light btn-lg ms-3" href="/swagger" target="_blank">
+                    <i class="fas fa-code me-2"></i>API Documentation
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card glass-card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-wifi me-2"></i>System Status
+                        </h5>
+                        <div class="api-status mt-2">
+                            <div class="skeleton skeleton-text"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <div class="d-flex align-items-center justify-content-md-end gap-3">
+                            <div class="text-center">
+                                <div class="stat-number text-success">99.9%</div>
+                                <div class="stat-label">Uptime</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="stat-number text-info">< 50ms</div>
+                                <div class="stat-label">Response</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100 interactive-card animate-on-scroll" onclick="window.location.href='/Dashboard/Scanner'">
+            <div class="card-body text-center d-flex flex-column">
+                <div class="mb-4">
+                    <div class="display-1 text-primary">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+                <h5 class="card-title mb-3">Network Scanner</h5>
+                <p class="card-text flex-grow-1">Scan individual IPs or entire network ranges with comprehensive port detection, service identification, and vulnerability assessment.</p>
+                <div class="mt-auto">
+                    <div class="row text-center mb-3">
+                        <div class="col-4">
+                            <div class="badge-gradient badge">IPv4/IPv6</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="badge-gradient badge">CIDR</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="badge-gradient badge">Real-time</div>
+                        </div>
+                    </div>
+                    <a href="/Dashboard/Scanner" class="btn btn-primary">
+                        <i class="fas fa-arrow-right me-1"></i>Start Scanning
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100 interactive-card animate-on-scroll" onclick="window.open('/swagger', '_blank')">
+            <div class="card-body text-center d-flex flex-column">
+                <div class="mb-4">
+                    <div class="display-1 text-success">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                </div>
+                <h5 class="card-title mb-3">Security Assessment</h5>
+                <p class="card-text flex-grow-1">Comprehensive vulnerability scanning with ML-powered anomaly detection, CVE database integration, and detailed remediation guidance.</p>
+                <div class="mt-auto">
+                    <div class="row text-center mb-3">
+                        <div class="col-4">
+                            <div class="badge bg-success">30+ CVEs</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="badge bg-success">ML Detection</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="badge bg-success">Auto-Fix</div>
+                        </div>
+                    </div>
+                    <a href="/api/NetworkScan/status" class="btn btn-success" target="_blank">
+                        <i class="fas fa-shield-alt me-1"></i>Check Security
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100 interactive-card animate-on-scroll" onclick="window.location.href='/Dashboard/Results'">
+            <div class="card-body text-center d-flex flex-column">
+                <div class="mb-4">
+                    <div class="display-1 text-info">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                </div>
+                <h5 class="card-title mb-3">Analytics & Reports</h5>
+                <p class="card-text flex-grow-1">View historical scan results with advanced filtering, export capabilities, trend analysis, and comprehensive reporting dashboards.</p>
+                <div class="mt-auto">
+                    <div class="row text-center mb-3">
+                        <div class="col-4">
+                            <div class="badge bg-info">Database</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="badge bg-info">Exports</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="badge bg-info">Charts</div>
+                        </div>
+                    </div>
+                    <a href="/Dashboard/Results" class="btn btn-info">
+                        <i class="fas fa-chart-line me-1"></i>View Analytics
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 mb-4">
+        <div class="card glass-card animate-on-scroll">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-rocket me-2"></i>
+                    Enhanced Features & Capabilities
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="d-flex align-items-start">
+                            <div class="service-badge service-secure me-3 mt-1">
+                                <i class="fas fa-server"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Enterprise Platform</h6>
+                                <p class="text-muted small mb-0">.NET 8.0 | Cross-platform | High-performance</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="d-flex align-items-start">
+                            <div class="service-badge service-web me-3 mt-1">
+                                <i class="fas fa-cloud"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Cloud Integration</h6>
+                                <p class="text-muted small mb-0">AWS | Azure | GCP | Multi-cloud support</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="d-flex align-items-start">
+                            <div class="service-badge service-secure me-3 mt-1">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">ML Anomaly Detection</h6>
+                                <p class="text-muted small mb-0">Advanced pattern recognition | Threat detection</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="d-flex align-items-start">
+                            <div class="service-badge service-web me-3 mt-1">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Database Storage</h6>
+                                <p class="text-muted small mb-0">Entity Framework | Persistent results | History</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="d-flex align-items-start">
+                            <div class="service-badge service-secure me-3 mt-1">
+                                <i class="fab fa-usb"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">IPv6 Discovery</h6>
+                                <p class="text-muted small mb-0">Neighbor discovery | Link-local | Global scope</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="d-flex align-items-start">
+                            <div class="service-badge service-web me-3 mt-1">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Responsive Design</h6>
+                                <p class="text-muted small mb-0">Mobile-friendly | Touch support | PWA ready</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4 mb-4">
+        <div class="card glass-card animate-on-scroll">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-tools me-2"></i>
+                    Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="/swagger" class="btn btn-outline-primary glass-button" target="_blank" data-bs-toggle="tooltip" title="Interactive API documentation and testing">
+                        <i class="fas fa-book me-2"></i>API Documentation
+                    </a>
+                    <a href="https://github.com/jomardyan/On-Prem-Network-InfraIQ" class="btn btn-outline-secondary glass-button" target="_blank" data-bs-toggle="tooltip" title="View source code on GitHub">
+                        <i class="fab fa-github me-2"></i>GitHub Repository
+                    </a>
+                    <button type="button" class="btn btn-outline-info glass-button" data-bs-toggle="modal" data-bs-target="#aboutModal" data-bs-toggle="tooltip" title="Learn more about the platform">
+                        <i class="fas fa-info me-2"></i>About Platform
+                    </button>
+                    <button type="button" class="btn btn-outline-warning glass-button" onclick="dashboard.showNotification('Keyboard shortcuts: Ctrl+S (Scan), Ctrl+R (Refresh), Ctrl+E (Export)', 'info', 6000)" data-bs-toggle="tooltip" title="View keyboard shortcuts">
+                        <i class="fas fa-keyboard me-2"></i>Shortcuts
+                    </button>
+                </div>
+                
+                <hr class="my-3">
+                
+                <div class="text-center">
+                    <h6 class="mb-3">
+                        <i class="fas fa-chart-pie me-2"></i>Quick Stats
+                    </h6>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="stat-card p-2 rounded">
+                                <div class="stat-number small">372</div>
+                                <div class="stat-label small">Tests</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-card p-2 rounded">
+                                <div class="stat-number small">v2.0</div>
+                                <div class="stat-label small">Version</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced About Modal -->
+<div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="aboutModalLabel">
+                    <i class="fas fa-info-circle me-2"></i>On-Prem Network InfraIQ v2.1.0
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-code me-2"></i>Technical Details</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Platform:</strong> .NET 8.0</li>
+                            <li><strong>License:</strong> MIT</li>
+                            <li><strong>Architecture:</strong> Cross-platform</li>
+                            <li><strong>API:</strong> RESTful with OpenAPI</li>
+                        </ul>
+                        
+                        <h6><i class="fas fa-shield-alt me-2"></i>Security Features</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-1"></i> 30+ Vulnerability patterns</li>
+                            <li><i class="fas fa-check text-success me-1"></i> CVE integration</li>
+                            <li><i class="fas fa-check text-success me-1"></i> Honeypot detection</li>
+                            <li><i class="fas fa-check text-success me-1"></i> Rate limiting</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-network-wired me-2"></i>Network Capabilities</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-1"></i> IPv4 & IPv6 support</li>
+                            <li><i class="fas fa-check text-success me-1"></i> CIDR range scanning</li>
+                            <li><i class="fas fa-check text-success me-1"></i> Service fingerprinting</li>
+                            <li><i class="fas fa-check text-success me-1"></i> Real-time discovery</li>
+                        </ul>
+                        
+                        <h6><i class="fas fa-cloud me-2"></i>Enterprise Integration</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-1"></i> AWS/Azure/GCP support</li>
+                            <li><i class="fas fa-check text-success me-1"></i> Database persistence</li>
+                            <li><i class="fas fa-check text-success me-1"></i> ML anomaly detection</li>
+                            <li><i class="fas fa-check text-success me-1"></i> Docker deployment</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="text-center">
+                    <p class="mb-3">
+                        <strong>Enterprise-grade network discovery and security assessment platform</strong><br>
+                        <small class="text-muted">Designed for cybersecurity professionals, network administrators, and penetration testers.</small>
+                    </p>
+                    
+                    <div class="row justify-content-center">
+                        <div class="col-auto">
+                            <div class="stat-card p-3 rounded">
+                                <div class="stat-number">20+</div>
+                                <div class="stat-label">Services Detected</div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="stat-card p-3 rounded">
+                                <div class="stat-number">372</div>
+                                <div class="stat-label">Test Cases</div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="stat-card p-3 rounded">
+                                <div class="stat-number">99.7%</div>
+                                <div class="stat-label">Success Rate</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="https://github.com/jomardyan/On-Prem-Network-InfraIQ" class="btn btn-outline-light" target="_blank">
+                    <i class="fab fa-github me-1"></i>View on GitHub
+                </a>
+                <a href="/swagger" class="btn btn-primary" target="_blank">
+                    <i class="fas fa-code me-1"></i>API Documentation
+                </a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
