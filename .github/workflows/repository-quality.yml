@@ -17,7 +17,7 @@ jobs:
       - name: Install the Python distribution and full development dependencies
         run: python -m pip install -e '.[dev]' pip-audit pytest-timeout
       - name: Run Python unit and serialization regressions
-        run: python -m pytest tests/unit -o addopts= -q --timeout=30 -W error::RuntimeWarning
+        run: python -m pytest tests/unit --timeout=30 -W error::RuntimeWarning
       - name: Audit the installed Python dependency graph
         run: python -m pip_audit --local
       - name: Build Python wheel and source distribution
