@@ -36,7 +36,7 @@
     <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
     <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.17.4" />
-    <PackageReference Include="Azure.ResourceManager.Compute" Version="1.4.0" />
+    <PackageReference Include="Azure.ResourceManager.Compute" Version="1.19.0" />
     <PackageReference Include="Google.Cloud.Compute.V1" Version="2.14.0" />
     <PackageReference Include="Google.Cloud.Storage.V1" Version="4.6.0" />
     <PackageReference Include="Google.Cloud.PubSub.V1" Version="3.8.0" />
