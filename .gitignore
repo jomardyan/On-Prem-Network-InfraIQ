@@ -406,3 +406,8 @@ data/
 logs/
 reports/
 config/settings.local.json
+/dist/
+__pycache__/
+/.audit-venv/
+/build/
+/*.egg-info/

@@ -108,7 +108,7 @@ public class IPv6NeighborDiscoveryService
             var buffer = new byte[32];
             var options = new PingOptions { DontFragment = true };
 
-            var reply = await ping.SendPingAsync(allNodesMulticast, _timeout, buffer, options);
+            var reply = await SendPingAsync(ping, allNodesMulticast, _timeout, cancellationToken, buffer, options);
             
             // In reality, multiple hosts would respond to this multicast
             // For simulation, we'll check some common IPv6 addresses
@@ -118,7 +118,7 @@ public class IPv6NeighborDiscoveryService
             {
                 if (cancellationToken.IsCancellationRequested) break;
 
-                var individualReply = await ping.SendPingAsync(addr, _timeout / 2);
+                var individualReply = await SendPingAsync(ping, addr, Math.Max(1, _timeout / 2), cancellationToken);
                 if (individualReply.Status == IPStatus.Success)
                 {
                     neighbors.Add(new IPv6NeighborInfo
@@ -214,7 +214,7 @@ public class IPv6NeighborDiscoveryService
             
             // Send Router Solicitation (simulated)
             using var ping = new Ping();
-            var reply = await ping.SendPingAsync(allRoutersMulticast, _timeout);
+            var reply = await SendPingAsync(ping, allRoutersMulticast, _timeout, cancellationToken);
 
             // Check for common router addresses
             var routerAddresses = GenerateCommonRouterAddresses();
@@ -223,7 +223,7 @@ public class IPv6NeighborDiscoveryService
             {
                 if (cancellationToken.IsCancellationRequested) break;
 
-                var routerReply = await ping.SendPingAsync(addr, _timeout / 2);
+                var routerReply = await SendPingAsync(ping, addr, Math.Max(1, _timeout / 2), cancellationToken);
                 if (routerReply.Status == IPStatus.Success)
                 {
                     neighbors.Add(new IPv6NeighborInfo
@@ -261,7 +261,7 @@ public class IPv6NeighborDiscoveryService
         {
             // Generate link-local addresses to scan
             var linkLocalAddresses = GenerateLinkLocalAddressesToScan();
-            var semaphore = new SemaphoreSlim(_maxConcurrency);
+            using var semaphore = new SemaphoreSlim(_maxConcurrency);
 
             var tasks = linkLocalAddresses.Select(async addr =>
             {
@@ -269,7 +269,7 @@ public class IPv6NeighborDiscoveryService
                 try
                 {
                     using var ping = new Ping();
-                    var reply = await ping.SendPingAsync(addr, _timeout / 2);
+                    var reply = await SendPingAsync(ping, addr, Math.Max(1, _timeout / 2), cancellationToken);
                     
                     if (reply.Status == IPStatus.Success)
                     {
@@ -321,7 +321,7 @@ public class IPv6NeighborDiscoveryService
             // For now, we'll simulate by pinging potential targets
             
             using var ping = new Ping();
-            var reply = await ping.SendPingAsync(target, _timeout);
+            var reply = await SendPingAsync(ping, target, _timeout, cancellationToken);
             
             if (reply.Status == IPStatus.Success)
             {
@@ -342,6 +342,17 @@ public class IPv6NeighborDiscoveryService
         }
 
         return neighbors;
+    }
+
+    private static async Task<PingReply> SendPingAsync(Ping ping, IPAddress address, int timeout,
+        CancellationToken cancellationToken, byte[]? buffer = null, PingOptions? options = null)
+    {
+        // Some OS ICMP implementations exceed their advertised timeout. Bind the
+        // operation to a real cancellation deadline and propagate caller cancellation.
+        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        deadline.CancelAfter(timeout);
+        return await ping.SendPingAsync(address, TimeSpan.FromMilliseconds(timeout),
+            buffer ?? Array.Empty<byte>(), options, deadline.Token);
     }
 
     /// <summary>

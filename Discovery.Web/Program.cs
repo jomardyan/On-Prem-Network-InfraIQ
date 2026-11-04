@@ -15,17 +15,6 @@ builder.Services.AddControllers();
 builder.Services.AddControllersWithViews();
 builder.Services.AddSignalR();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll",
-        builder =>
-        {
-            builder.AllowAnyOrigin()
-                   .AllowAnyMethod()
-                   .AllowAnyHeader();
-        });
-});
-
 // Add database context
 builder.Services.AddDbContext<NetworkDiscoveryDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? 
@@ -80,6 +69,9 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+// All controllers, static UI and SignalR entry points share the operator guard.
+app.UseMiddleware<Discovery.Web.Security.OperatorAccessMiddleware>();
+
 // Initialize database (commented out for now to avoid issues during demo)
 // using (var scope = app.Services.CreateScope())
 // {
@@ -105,8 +97,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
-
-app.UseCors("AllowAll");
 
 // Map MVC routes for dashboard
 app.MapControllerRoute(

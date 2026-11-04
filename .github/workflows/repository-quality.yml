@@ -1,0 +1,36 @@
+name: Repository quality
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+      - run: dotnet restore "Dev1.sln"
+      - run: dotnet build "Dev1.sln" -c Release --no-restore -p:EnforceCodeStyleInBuild=true
+      - run: dotnet test Discovery.Tests/Discovery.Tests.csproj -c Release --no-build
+      - run: dotnet list "Dev1.sln" package --vulnerable --include-transitive
+      - run: dotnet publish Discovery.Web/Discovery.Web.csproj -c Release --no-build --self-contained false -o dist/web
+  codeql:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: csharp
+          build-mode: none
+      - uses: github/codeql-action/analyze@v3

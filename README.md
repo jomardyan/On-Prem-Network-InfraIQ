@@ -429,3 +429,13 @@ Special thanks to:
 </p>
 
 </div>
+
+## Development verification
+
+Install the .NET SDK matching the project targets, Python 3 and GNU Make. Use `make install`, `make build`, `make lint`, `make test`, `make security`, `make package` and `make clean`. On Windows pass `PYTHON=python`. `make dev` restores dependencies for local development. Packaging writes local artifacts to `dist`; it does not publish packages or deploy. The dependency-list command reports advisories for review, and CI also performs CodeQL source analysis. Run real hardware and operating-system integrations on the supported platforms.
+
+### Operator access
+
+Direct local requests using a loopback hostname remain available without credentials. Remote callers and reverse proxies must send `X-InfraIQ-Api-Key` matching a nonempty `Security:ApiKey` setting (`Security__ApiKey` environment variable). Keep the value in an environment or secret store; do not commit it. Missing/incorrect keys return HTTP 403. Browser requests must use the same scheme/authority as the requested site; wildcard CORS is removed. This guard covers controllers, dashboard and SignalR together. An authenticated reverse proxy can inject the header for a remote dashboard; ensure forwarded scheme/host and trusted proxy settings are configured correctly. Do not expose an unauthenticated proxy that supplies this operator credential to arbitrary clients.
+
+The .NET8 ASP.NET runtime is needed for the integration test host; a newer SDK alone does not provide that runtime. Python components have separate dependencies in `pyproject.toml`; install `.[dev]` in an isolated Python environment and run `pytest` separately. Local Windows review does not establish Linux/raw-socket or external-network behavior. Release artifact generation from the build workflow requires a manual trigger.
