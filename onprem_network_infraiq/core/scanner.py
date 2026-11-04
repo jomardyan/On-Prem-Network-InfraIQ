@@ -198,7 +198,7 @@ class NetworkScanner:
                     operating_system=os_info,
                     server_info=server_info,
                     hostname=hostname,
-                    discovered_at=lambda: datetime.now(timezone.utc)(),
+                    discovered_at=datetime.now(timezone.utc),
                 )
             else:
                 sock.close()
