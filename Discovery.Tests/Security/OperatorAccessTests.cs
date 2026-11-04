@@ -50,4 +50,28 @@ public class OperatorAccessTests
         await middleware.InvokeAsync(context);
         Assert.Equal(403, context.Response.StatusCode);
     }
+
+    [Theory]
+    [InlineData("Forwarded", false)]
+    [InlineData("X-Forwarded-For", false)]
+    [InlineData("X-Forwarded-Host", false)]
+    [InlineData("X-Forwarded-Proto", false)]
+    [InlineData("X-Real-IP", false)]
+    [InlineData("X-Forwarded-For", true)]
+    public async Task ForwardedLoopbackRequestsRequireOperatorKey(string header, bool authenticated)
+    {
+        var context = new DefaultHttpContext();
+        context.Request.Scheme = "http";
+        context.Request.Host = new HostString("localhost:5275");
+        context.Connection.RemoteIpAddress = IPAddress.Loopback;
+        context.Request.Headers[header] = "fixture-forwarded-value";
+        context.Response.Body = new MemoryStream();
+        if (authenticated) context.Request.Headers["X-InfraIQ-Api-Key"] = "local-test-key";
+        var config = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?> { ["Security:ApiKey"] = "local-test-key" }).Build();
+        var called = false;
+        var middleware = new OperatorAccessMiddleware(_ => { called = true; return Task.CompletedTask; }, config);
+        await middleware.InvokeAsync(context);
+        Assert.Equal(authenticated, called);
+        Assert.Equal(authenticated ? 200 : 403, context.Response.StatusCode);
+    }
 }

@@ -30,6 +30,13 @@ public sealed class OperatorAccessMiddleware
 
     private static bool IsLocalOperator(HttpContext context)
     {
+        // Common proxies arrive over loopback. Their forwarded requests must
+        // authenticate even if the upstream Host header was rewritten locally.
+        var headers = context.Request.Headers;
+        if (headers.ContainsKey("Forwarded") || headers.ContainsKey("X-Forwarded-For")
+            || headers.ContainsKey("X-Forwarded-Host") || headers.ContainsKey("X-Forwarded-Proto")
+            || headers.ContainsKey("X-Real-IP"))
+            return false;
         var address = context.Connection.RemoteIpAddress;
         if (address?.IsIPv4MappedToIPv6 == true)
             address = address.MapToIPv4();
