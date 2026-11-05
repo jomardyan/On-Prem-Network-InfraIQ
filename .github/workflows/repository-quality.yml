@@ -15,13 +15,13 @@ jobs:
           python-version: '3.12'
           cache: pip
       - name: Install the Python distribution and full development dependencies
-        run: python -m pip install -e '.[dev]' pip-audit pytest-timeout
+        run: make python-install-dev PYTHON=python
       - name: Run Python unit and serialization regressions
-        run: python -m pytest tests/unit --timeout=30 -W error::RuntimeWarning
+        run: make python-test PYTHON=python
       - name: Audit the installed Python dependency graph
         run: python -m pip_audit --local
       - name: Build Python wheel and source distribution
-        run: python -m build --outdir dist/python
+        run: make python-build PYTHON=python
       - uses: actions/upload-artifact@v4
         with:
           name: python-distributions
@@ -38,11 +38,11 @@ jobs:
         with:
           dotnet-version: |
             8.0.x
-      - run: dotnet restore "Dev1.sln"
-      - run: dotnet build "Dev1.sln" -c Release --no-restore -p:EnforceCodeStyleInBuild=true
-      - run: dotnet test Discovery.Tests/Discovery.Tests.csproj -c Release --no-build
+      - run: make help restore
+      - run: make lint
+      - run: make dotnet-test
       - run: dotnet list "Dev1.sln" package --vulnerable --include-transitive
-      - run: dotnet publish Discovery.Web/Discovery.Web.csproj -c Release --no-build --self-contained false -o dist/web
+      - run: make package
   codeql:
     runs-on: ubuntu-latest
     timeout-minutes: 20
