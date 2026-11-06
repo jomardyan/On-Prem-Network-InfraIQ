@@ -31,7 +31,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.33" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.33" />
     <!-- Cloud services integration -->
-    <PackageReference Include="AWSSDK.EC2" Version="3.7.0" />
+    <PackageReference Include="AWSSDK.EC2" Version="4.0.131" />
     <PackageReference Include="AWSSDK.S3" Version="3.7.0" />
     <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
